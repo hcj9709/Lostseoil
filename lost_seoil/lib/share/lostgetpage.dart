@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Dialog/dialog.dart';
-import 'dropdownbutton.dart';
+import '../Write/Getwrite.dart';
+import '../dropdown/dropdownbutton.dart';
+import '../filter/getfilter.dart';
 import 'lostseoild_mainform.dart';
 import '../headbar/mainhead.dart';
 import '../menu/menu_drawer.dart';
@@ -28,6 +30,7 @@ class GetPage extends StatelessWidget {
               children:  <Widget>[
 
                 Container(
+
                   padding: const EdgeInsets.all(0),margin: const EdgeInsets.all(0),
                   height: 50,width: double.infinity,
                   child: Row(
@@ -67,9 +70,17 @@ class GetPage extends StatelessWidget {
                   ),
                 )
                 ,Container(
-                    margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-
+                  height: 50,
+                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                          bottom:BorderSide (
+                            width: 1,
+                            color: Colors.grey,
+                          )
+                      ),
+                    ),
                     child:Row(
 
                       children:   [
@@ -77,7 +88,7 @@ class GetPage extends StatelessWidget {
                         const Flexible(
                           fit:FlexFit.tight,
                           flex:3,
-                          child: Text("습득했어요.      ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+                          child: Text("  습득물 게시판    ",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)
                           ,
                         )
 
@@ -86,7 +97,7 @@ class GetPage extends StatelessWidget {
                           fit:FlexFit.tight,
                           flex:1,
 
-                          child: ElevatedButton( onPressed: () {  },
+                          child: ElevatedButton( onPressed: () { Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Getwrite())); },
                               child: const Text("글쓰기")),
 
                         ),
@@ -228,7 +239,7 @@ class GetPage extends StatelessWidget {
                     //Text("필터 필드")
                     Align(
                         alignment: Alignment.topRight,
-                        child: TextButton.icon(onPressed: (){}, icon:  const Icon(Icons.tune,), label: const Text("필터"),)
+                        child: TextButton.icon(onPressed: (){Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Getfilter()));}, icon:  const Icon(Icons.tune,), label: const Text("필터"),)
                     )
                   ],
 

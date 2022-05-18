@@ -41,7 +41,9 @@ class Login_page extends StatelessWidget {
               fillColor: Colors.white,
             )),
               const SizedBox(height: 12.0),
-          const TextField(decoration: InputDecoration( filled: true, labelText: '비밀번호',
+          const TextField(
+              obscureText: true,
+              decoration: InputDecoration( filled: true, labelText: '비밀번호',
             fillColor: Colors.white,
           )),
               const SwitchLog(),

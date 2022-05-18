@@ -1,5 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:lost_seoil/Dialog/logoutDialog.dart';
+
+import '../Dialog/dialog.dart';
 
 
 class MenuDrawer extends StatelessWidget {
@@ -70,13 +73,13 @@ class MenuDrawer extends StatelessWidget {
               title: const Text("신고내역", style: TextStyle(fontSize: 18,color: Colors.lightBlue),),
               onTap: () {},
             ),
-            ListTile(
+            ListTile( //로그아웃 버튼
               leading: const Icon(
                 Icons.logout,
                 color: Colors.lightBlue,
               ),
               title: const Text("로그아웃", style: TextStyle(fontSize: 18,color: Colors.lightBlue),),
-              onTap: () {},
+              onTap: () async {  Future.delayed(Duration.zero, () => LogoutDialog(context));},
             ),
              const ListTile(title: Text("학생 지원처 : 02-xxxx-xxxx",style: TextStyle(fontSize: 18),),)
          
