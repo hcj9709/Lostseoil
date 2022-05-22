@@ -97,7 +97,7 @@ class GetPage extends StatelessWidget {
                           fit:FlexFit.tight,
                           flex:1,
 
-                          child: ElevatedButton( onPressed: () { Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Getwrite())); },
+                          child: ElevatedButton( onPressed: () {  },
                               child: const Text("글쓰기")),
 
                         ),
