@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lost_seoil/Write/Lostwrite.dart';
 import 'package:lost_seoil/dropdown/dropdownbutton.dart';
 import 'package:lost_seoil/share/lostgetpage.dart';
 import 'package:lost_seoil/headbar/mainhead.dart';
@@ -8,12 +9,15 @@ import 'package:lost_seoil/headbar/mainhead.dart';
 import '../filter/filter.dart';
 import '../Dialog/dialog.dart';
 import '../menu/menu_drawer.dart';
-
-
-class MyApp extends StatelessWidget {
-
+class MyApp extends StatefulWidget{
   const MyApp({Key? key}) : super(key: key);
+  @override
+    MyAppscreen createState()=> MyAppscreen();
+}
 
+
+
+class  MyAppscreen extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,6 @@ class MyApp extends StatelessWidget {
           appBar:const TopBar(),
           //왼쪽위 메뉴 버튼 누르면 나오는 Drawer
           drawer: const MenuDrawer(
-
           ),
           //몸통시작
           body:  SingleChildScrollView(
@@ -69,27 +72,36 @@ class MyApp extends StatelessWidget {
                     ],
                   ),
                 )
-             ,Container(
-                  margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+             ,
+                Container(
+                  height: 50,
+                  margin: const EdgeInsets.fromLTRB(0,0, 0, 10),
+                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom:BorderSide (
+                        width: 1,
+                        color: Colors.grey,
+                        )
+                      ),
+                    ),
+                    child:Row(
 
-                  child:Row(
-
-                  children:   [
+                       children:   [
 
                          const Flexible(
                          fit:FlexFit.tight,
                          flex:3,
-                         child: Text("분실물 찾습니다.      ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+                         child: Text("   분실물 게시판    ",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color:Colors.black),)
                         ,
                           )
 
                     ,
-                    Flexible(
+                     Flexible(
                       fit:FlexFit.tight,
                       flex:1,
 
-                     child: ElevatedButton( onPressed: () {  },
+                       child: ElevatedButton( onPressed: () { Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Lostwrite())); },
                         child: const Text("글쓰기")),
 
                     ),
@@ -104,133 +116,83 @@ class MyApp extends StatelessWidget {
 
                   children:  [
                     // 게시판 글 한칸
-                   SizedBox(
-                     height: 50,
-                    child:Row(
-                     children: [
-                       Image.asset('assets/images/banana.png')
-                       ,
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children :  const [
-                          Text("배양관3 413호 검은 마우스"),
+                    ListTile(
+                      leading:   ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minWidth: 20,
+                          minHeight: 44,
+                          maxWidth: 64,
+                          maxHeight: 64,
+                        ),
+                        child:  Image.asset('assets/images/banana.png',fit: BoxFit.cover),
+                      ),
 
-                          Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
 
-                        ]
-                      )
-                          ]
-                    )
-                   ),
+                     //DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
+
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
+                    ),
                     const Divider(
-                        color: Colors.black
+                        color: Colors.grey
 
                     ) ,    //여기까지가 첫줄
 
 
 
-                    SizedBox(
-                        height: 50,
-                        child:Row(
-                            children: [
-                              Image.asset('assets/images/banana.png')
-                              ,
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children :  const [
-                                    Text("배양관3 413호 검은 마우스"),
-
-                                    Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
-
-                                  ]
-                              )
-                            ]
-                        )
-                    ),
-                    const Divider(
-                        color: Colors.black
-
-                    ) ,
-                    SizedBox(
-                        height: 50,
-                        child:Row(
-                            children: [
-                              Image.asset('assets/images/banana.png')
-                              ,
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children :  const [
-                                    Text("배양관3 413호 검은 마우스"),
-
-                                    Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
-
-                                  ]
-                              )
-                            ]
-                        )
-                    ),
-                    const Divider(
-                        color: Colors.black
-
-                    ) ,
-                    SizedBox(
-                        height: 50,
-                        child:Row(
-                            children: [
-                              Image.asset('assets/images/banana.png')
-                              ,
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children :  const [
-                                    Text("배양관3 413호 검은 마우스"),
-
-                                    Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
-
-                                  ]
-                              )
-                            ]
-                        )
-                    ),
-                    const Divider(
-                        color: Colors.black
-
-                    ) ,
-                    SizedBox(
-                        height: 50,
-                        child:Row(
-                            children: [
-                              Image.asset('assets/images/banana.png')
-                              ,
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children :  const [
-                                    Text("배양관3 413호 검은 마우스"),
-
-                                    Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
-
-                                  ]
-                              )
-                            ]
-                        )
-                    ),
-                    const Divider(
-                        color: Colors.black
-
-                    ) ,
                     ListTile(
-                      leading:   Image.asset('assets/images/banana.png',),
-                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),
-                      subtitle: const Text("6시간"),
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
+
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
                       onTap: () {},
                     ),
                     const Divider(
-                        color: Colors.black
+                        color: Colors.grey
 
+                    ) ,
+                    ListTile(
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
+
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
+                    ),
+                    const Divider(
+                        color: Colors.grey
+
+                    ) ,
+                    ListTile(
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
+
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
+                    ),
+                    const Divider(
+                        color: Colors.grey
+
+                    ) ,
+                    ListTile(
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
+
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
+                    ),
+                    const Divider(
+                        color: Colors.grey
+                    ) ,
+                    ListTile(
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
+
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
+                    ),
+                    const Divider(
+                        color: Colors.grey
                     ) ,
                   ],
                 )
@@ -241,7 +203,7 @@ class MyApp extends StatelessWidget {
                     //Text("필터 필드")
                   Align(
                     alignment: Alignment.topRight,
-                   child: TextButton.icon(onPressed: (){Navigator.push(context,MaterialPageRoute(builder:(context)=>  Myfilter()));}, icon:  const Icon(Icons.tune,), label: const Text("필터"),)
+                   child: TextButton.icon(onPressed: (){Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Myfilter()));}, icon:  const Icon(Icons.tune,), label: const Text("필터"),)
                   )
                   ],
 

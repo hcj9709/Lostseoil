@@ -29,7 +29,7 @@ class _MyDemoState extends State<Mydropdown> {
             (String value) {
           return DropdownMenuItem <String>(
             value: value,
-            child: Text( value,style: const TextStyle(fontSize: 13),),
+            child: Text( value,style: const TextStyle(fontSize: 15),),
 
           );
         },

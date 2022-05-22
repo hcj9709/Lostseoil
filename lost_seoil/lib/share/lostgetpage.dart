@@ -3,13 +3,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Dialog/dialog.dart';
+import '../Write/Getwrite.dart';
 import '../dropdown/dropdownbutton.dart';
+import '../filter/getfilter.dart';
 import 'lostseoild_mainform.dart';
 import '../headbar/mainhead.dart';
 import '../menu/menu_drawer.dart';
 
-class GetPage extends StatelessWidget {
+
+class GetPage extends StatefulWidget{
   const GetPage({Key? key}) : super(key: key);
+  @override
+  GetPagescreen createState()=> GetPagescreen();
+}
+
+
+
+class  GetPagescreen extends State<GetPage> {
 
   // This widget is the root of your application.
   @override
@@ -28,6 +38,7 @@ class GetPage extends StatelessWidget {
               children:  <Widget>[
 
                 Container(
+
                   padding: const EdgeInsets.all(0),margin: const EdgeInsets.all(0),
                   height: 50,width: double.infinity,
                   child: Row(
@@ -67,9 +78,17 @@ class GetPage extends StatelessWidget {
                   ),
                 )
                 ,Container(
-                    margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-
+                  height: 50,
+                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                          bottom:BorderSide (
+                            width: 1,
+                            color: Colors.grey,
+                          )
+                      ),
+                    ),
                     child:Row(
 
                       children:   [
@@ -77,7 +96,7 @@ class GetPage extends StatelessWidget {
                         const Flexible(
                           fit:FlexFit.tight,
                           flex:3,
-                          child: Text("습득했어요.      ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+                          child: Text("  습득물 게시판    ",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)
                           ,
                         )
 
@@ -101,122 +120,83 @@ class GetPage extends StatelessWidget {
 
                   children:  [
                     // 게시판 글 한칸
-                    SizedBox(
-                        height: 50,
-                        child:Row(
-                            children: [
-                              Image.asset('assets/images/banana.png')
-                              ,
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children :  const [
-                                    Text("배양관3 413호 검은 마우스"),
+                    ListTile(
+                      leading:   ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minWidth: 20,
+                          minHeight: 44,
+                          maxWidth: 64,
+                          maxHeight: 64,
+                        ),
+                        child:  Image.asset('assets/images/banana.png',fit: BoxFit.cover),
+                      ),
 
-                                    Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
 
-                                  ]
-                              )
-                            ]
-                        )
+                      //DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
+
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
                     ),
                     const Divider(
-                        color: Colors.black
+                        color: Colors.grey
 
                     ) ,    //여기까지가 첫줄
 
 
 
-                    SizedBox(
-                        height: 50,
-                        child:Row(
-                            children: [
-                              Image.asset('assets/images/banana.png')
-                              ,
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children :  const [
-                                    Text("배양관3 413호 검은 마우스"),
+                    ListTile(
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
 
-                                    Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
-
-                                  ]
-                              )
-                            ]
-                        )
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
                     ),
                     const Divider(
-                        color: Colors.black
+                        color: Colors.grey
 
                     ) ,
-                    SizedBox(
-                        height: 50,
-                        child:Row(
-                            children: [
-                              Image.asset('assets/images/banana.png')
-                              ,
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children :  const [
-                                    Text("배양관3 413호 검은 마우스"),
+                    ListTile(
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
 
-                                    Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
-
-                                  ]
-                              )
-                            ]
-                        )
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
                     ),
                     const Divider(
-                        color: Colors.black
+                        color: Colors.grey
 
                     ) ,
-                    SizedBox(
-                        height: 50,
-                        child:Row(
-                            children: [
-                              Image.asset('assets/images/banana.png')
-                              ,
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children :  const [
-                                    Text("배양관3 413호 검은 마우스"),
+                    ListTile(
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
 
-                                    Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
-
-                                  ]
-                              )
-                            ]
-                        )
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
                     ),
                     const Divider(
-                        color: Colors.black
+                        color: Colors.grey
 
                     ) ,
-                    SizedBox(
-                        height: 50,
-                        child:Row(
-                            children: [
-                              Image.asset('assets/images/banana.png')
-                              ,
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children :  const [
-                                    Text("배양관3 413호 검은 마우스"),
+                    ListTile(
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
 
-                                    Text("    6시간전",style: TextStyle(fontSize: 10,color: Colors.lightBlue,),),
-
-                                  ]
-                              )
-                            ]
-                        )
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
                     ),
                     const Divider(
-                        color: Colors.black
+                        color: Colors.grey
+                    ) ,
+                    ListTile(
+                      leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                      title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
+
+                      subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
+                      onTap: () {},
+                    ),
+                    const Divider(
+                        color: Colors.grey
 
                     ) ,
                   ],
@@ -228,7 +208,7 @@ class GetPage extends StatelessWidget {
                     //Text("필터 필드")
                     Align(
                         alignment: Alignment.topRight,
-                        child: TextButton.icon(onPressed: (){}, icon:  const Icon(Icons.tune,), label: const Text("필터"),)
+                        child: TextButton.icon(onPressed: (){Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Getfilter()));}, icon:  const Icon(Icons.tune,), label: const Text("필터"),)
                     )
                   ],
 

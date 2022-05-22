@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-final _valueList = ['전체', '전자기기', '카드','지갑','충전기','책'];
+
+final _valueList = ['전체', '전자기기', '카드','지갑','충전기','책','기타'];
 var _selectedValue = '전체';
 
-class Filterdropdown extends StatefulWidget {
-  const Filterdropdown({Key? key}) : super(key: key);
+class Lostdropdown extends StatefulWidget {
+  const Lostdropdown({Key? key}) : super(key: key);
 
   @override
-  FilterdropdownButton createState() => FilterdropdownButton();
+  LostdropdownButton createState() => LostdropdownButton();
 }
 
-class FilterdropdownButton extends State<Filterdropdown> {
+class LostdropdownButton extends State<Lostdropdown> {
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -25,7 +26,9 @@ class FilterdropdownButton extends State<Filterdropdown> {
                 child:DropdownButton<String>(
                   isExpanded: true,
                   value: _selectedValue,
+
                   items: _valueList.map(
+
                         (String value) {
                       return DropdownMenuItem <String>(
                         value: value,
@@ -50,7 +53,3 @@ class FilterdropdownButton extends State<Filterdropdown> {
 
   }
 }
-
-
-
-

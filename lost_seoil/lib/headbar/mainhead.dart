@@ -15,7 +15,6 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
         backgroundColor:Colors.white ,
-        titleTextStyle:const TextStyle(color:Colors.lightBlue , fontSize: 35 , fontWeight: FontWeight.bold) ,
 
         iconTheme: const IconThemeData(
           color: Colors.lightBlue ,//색변경
@@ -23,9 +22,17 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
 
         ),
 
-        title: const Text("LOST 서일", textAlign: TextAlign.left ,)
+        title: RichText(
+            text:  const TextSpan(
+                style:TextStyle(fontSize: 27, color: Colors.lightBlue) ,
+                children:<TextSpan>[
+                  TextSpan(text: "LOST", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
+                  TextSpan(text: " IN", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
+                  TextSpan(text: " 서일", style: TextStyle(fontWeight: FontWeight.bold)),
+                ]
+            )
+        ),
         //타이틀
-        ,
 
         actions: <Widget>[
           const MyPopUp()  , // 다이얼로그 팝업 열리는 함수임
