@@ -2,34 +2,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lost_seoil/Write/Lostwrite.dart';
-import 'package:lost_seoil/dropdown/dropdownbutton.dart';
-import 'package:lost_seoil/share/lostgetpage.dart';
+
+import 'package:lost_seoil/mainform/lostgetpage.dart';
 import 'package:lost_seoil/headbar/mainhead.dart';
 
 import '../filter/filter.dart';
 import '../Dialog/dialog.dart';
 import '../menu/menu_drawer.dart';
-
-
-class MyApp extends StatelessWidget {
-
+import '../postsee/lostsee.dart';
+class MyApp extends StatefulWidget{
   const MyApp({Key? key}) : super(key: key);
+  @override
+    MyAppscreen createState()=> MyAppscreen();
+}
 
-  // This widget is the root of your application.
+
+
+class  MyAppscreen extends State<MyApp> {
+  final _valueList = ['제목', '제목+내용', '글쓴이'];
+  var _selectedValue = '제목';
+   final PageController pageController = PageController(
+    initialPage: 0,
+  );
+   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
-
         home:
         Scaffold(
           resizeToAvoidBottomInset: true , //이걸넣어 키보드가 올라왔을떄 화면이 밀리도록 설정
           appBar:const TopBar(),
           //왼쪽위 메뉴 버튼 누르면 나오는 Drawer
           drawer: const MenuDrawer(
-
           ),
           //몸통시작
-          body:  SingleChildScrollView(
+          body:
+          SingleChildScrollView(
             child:Column(
               children:  <Widget>[
 
@@ -86,7 +94,7 @@ class MyApp extends StatelessWidget {
                     ),
                     child:Row(
 
-                  children:   [
+                       children:   [
 
                          const Flexible(
                          fit:FlexFit.tight,
@@ -96,11 +104,11 @@ class MyApp extends StatelessWidget {
                           )
 
                     ,
-                    Flexible(
+                     Flexible(
                       fit:FlexFit.tight,
                       flex:1,
 
-                     child: ElevatedButton( onPressed: () { Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Lostwrite())); },
+                       child: ElevatedButton( onPressed: () { Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Lostwrite())); },
                         child: const Text("글쓰기")),
 
                     ),
@@ -131,7 +139,10 @@ class MyApp extends StatelessWidget {
                       title: const Text("배양관 413호 검은마우스", style: TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
 
                       subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(context,MaterialPageRoute(builder:(context)=>   Lostsee()));
+
+                      },
                     ),
                     const Divider(
                         color: Colors.grey
@@ -192,7 +203,6 @@ class MyApp extends StatelessWidget {
                     ),
                     const Divider(
                         color: Colors.grey
-
                     ) ,
                   ],
                 )
@@ -229,11 +239,34 @@ class MyApp extends StatelessWidget {
                   child: Row(
                   children:
                   [
-                    const Flexible(
+                    Flexible(
                       fit:FlexFit.tight,
                       flex: 2,
-                       child: Mydropdown(),
-                        )
+                      child: DropdownButtonHideUnderline(
+
+                          child:DropdownButton<String>(
+                            isExpanded: true,
+                            value: _selectedValue,
+                            items: _valueList.map(
+                                  (String value) {
+                                return DropdownMenuItem <String>(
+                                  value: value,
+                                  child: Text( value,style: const TextStyle(fontSize: 13),),
+
+                                );
+                              },
+                            ).toList(),
+                            onChanged: (String? value) {
+                              setState(() {
+                                _selectedValue =  value!;
+                              });
+                            },
+
+
+                          )
+
+                      ),
+                    )
                             ,
                      const Flexible(
                       fit:FlexFit.tight,
@@ -261,11 +294,12 @@ class MyApp extends StatelessWidget {
                 )
         ),
       ],
-          
+
             ),
 
 
           ),
+
           bottomNavigationBar:const BottomAppBar(),
         )
     );

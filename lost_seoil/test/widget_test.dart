@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:lost_seoil/main.dart';
-import 'package:lost_seoil/share/lostseoild_mainform.dart';
+import 'package:lost_seoil/mainform/lostseoild_mainform.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
