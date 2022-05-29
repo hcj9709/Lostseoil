@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Dialog/dialog.dart';
+import '../filter/filter.dart';
 
 
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
@@ -37,9 +38,10 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         actions: <Widget>[
           const MyPopUp()  , // 다이얼로그 팝업 열리는 함수임
           IconButton(
-            visualDensity: const VisualDensity(horizontal: -4.0, vertical: -4.0), //이부분이 줄여주는 부분이다.
+            visualDensity: const VisualDensity(horizontal: -4.0, vertical: -2.0), //이부분이 줄여주는 부분이다.
             padding: EdgeInsets.zero,
-            icon: const Icon(Icons.notifications),color:Colors.lightBlue, onPressed: () {
+            icon: const Icon(Icons.search,size: 30 ,),color:Colors.lightBlue, onPressed: () {
+            Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Myfilter()));
           },),
 
         ]

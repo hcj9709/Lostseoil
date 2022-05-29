@@ -5,7 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:lost_seoil/share/lostseoild_mainform.dart';
+import 'package:lost_seoil/mainform/lostseoild_mainform.dart';
 import 'package:http/http.dart' as http;
 import '../Dialog/loginfail.dart';
 import '../share/Switch_login.dart';
@@ -25,48 +25,56 @@ class StateLogin_page extends State<Login_page> {
   final idController = TextEditingController();
   final passwordController = TextEditingController();
 
-  late bool islogined ;
+  late int islogined ;
 
 
   @override
    initState()   {
     super.initState();
-    islogined=false;
-    //WidgetsBinding.instance.addPostFrameCallback((_) {servarMethod();});
+
   }
   @override
   void dispose() {
     // TODO: implement dispose
-    idController.dispose();
-    passwordController.dispose();
+    idController.dispose(); //아이디 필드 입력 컨트롤
+    passwordController.dispose();//비밀번호 필드 입력 컨트롤
     super.dispose();
   }
 
-  Future<bool> getHttp()  async {
-      Dio dio = Dio();
+  Future<bool> getHttp()  async { //함수내용은 Dio 이나 이름을 바꾸지 않았음
     try {
-      final response = await dio.get('http://wnsgnl97.myqnapcloud.com:3001/api/user/login',
-          queryParameters: {'id':idController.text , 'password':passwordController.text});
-      //텍스트필드에 2개의 값을 쿼리파라미터로 값을 서버에 전달하여 서버에 인증을 성공한후 데이터를 받음
+      Dio dio = Dio();
+      var data = {'id':idController.text , 'password':passwordController.text };
+      var body = json.encode(data); //데이타 피라미터를 json 인코드함
+      Response response = await dio.post('http://wnsgnl97.myqnapcloud.com:3001/api/user/login',
+          data:body);
 
+      //텍스트필드에 2개의 값을 json을 이용하여 인코드한다음 클라이언트가 data를 보내면 서버가 data를 받고 Db에 저장된값을 보내줌
       print(response.data);
-
+      print(response.statusCode);
       setState((){
-        islogined= response.data['success']; //이렇게 해야 db에 저장되어있는 "석세스" 라는 값을 받을수있음
+        print("셋 스테이트");//돌아가는지 확인 하기위해 사용
+        //islogined= response.data['success']; //이렇게 해야 db에 저장되어있는 "석세스" 라는 값을 받을수있음
+        if (response.statusCode==200) {
+          final name = response.data['name'];
+          final student_id = response.data['id'];
+          print(name);
+          print(student_id);
+          Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyApp(name: name ,student_id: student_id )));
+          print("로그인성공");
+        }
+        else{
+          Future.delayed(Duration.zero, () => LoginfailDialog(context));
+          print("로그인실패");
+
+        }
       });
 
     } catch (e) {
-      print(e);
+      print("서버에러");
     }
     finally{
-      if (islogined==true) {
-        Navigator.push(context,MaterialPageRoute(builder:(context)=>  const MyApp()));
-        print("로그인성공");
-      }
-      else{
-        Future.delayed(Duration.zero, () => LoginfailDialog(context));
-        print("로그인실패");
-      }
+
     }
     return false;
   }
@@ -128,10 +136,9 @@ class StateLogin_page extends State<Login_page> {
                       width: 350,
                       child:TextButton(
                           onPressed: ()  {
-                            print(idController.text);
-                            print(passwordController.text);
+                                //ㅁㄴㅇㄴㅁ
 
-                           WidgetsBinding.instance!.addPostFrameCallback((_)  { getHttp();});
+                           WidgetsBinding.instance!.addPostFrameCallback((_)  {getHttp();});
 
 
 

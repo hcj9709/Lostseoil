@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:lost_seoil/dropdown/lostdropdown.dart';
 
 class Lostwrite extends StatefulWidget {
   const Lostwrite({Key? key}) : super(key: key);
@@ -17,8 +16,21 @@ class Lostwrite extends StatefulWidget {
 class MyLostwrite extends State<Lostwrite> {
     File? imageFile  = File(''); // 카메라/갤러리에서 사진 가져올 때 사용함 (image_picker)
   final ImagePicker _picker = ImagePicker(); // 카메라/갤러리에서 사진 가져올 때 사용함 (image_picker)
+  late String filtertext;
+    final _valueList = ['전체', '전자기기', '카드','지갑','충전기','책','기타'];
+    var _selectedValue = '전체';
+    final TitleController = TextEditingController();
+    final LostwhereController = TextEditingController();
+    final Content = TextEditingController();
+    @override
+    void dispose() {
+      // TODO: implement dispose
+      super.dispose();
+      TitleController.dispose();
+      LostwhereController.dispose();
+      Content.dispose();
 
-
+    }
   Widget bottomSheet() {
     return SingleChildScrollView(
       child: Container(
@@ -107,17 +119,31 @@ class MyLostwrite extends State<Lostwrite> {
 
   Future<DateTime> _selectDate(BuildContext context,DateTime date) async {
     final DateTime? pickedDate = await showDatePicker(
-
-
       context: context,
       initialDate: date,
       firstDate: DateTime(2015),
       lastDate: DateTime.now(),
-
-    );
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Colors.lightBlue, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: Colors.black, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Colors.red, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+         );
     if (pickedDate != null  ) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-
       setState(() {
 
         date = pickedDate;
@@ -128,10 +154,7 @@ class MyLostwrite extends State<Lostwrite> {
     }
     return date;
   }//기간나오는 캘린더 다이얼로그 부분
-  @override
-  void dispose(){
-    super.dispose();
-  }
+
 
 
 
@@ -153,99 +176,218 @@ class MyLostwrite extends State<Lostwrite> {
         body:SingleChildScrollView(
           child: Container(
               margin: const EdgeInsets.all(0.5),
-              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.black,
                   width: 1,
+
                 ),
               ),
             child:Column(
               children:  [
-
-                  const Lostdropdown(),
-
                 Container(
-                  child: const TextField(
-                      decoration: InputDecoration(
-                     border : OutlineInputBorder(),
-                     focusedBorder: OutlineInputBorder(),
-                     fillColor: Colors.white,
-                     filled: true, labelText: '제목을 입력해주세요',
-                   )
-                ),
-                ),
-                Container(
-                  margin: const EdgeInsets.fromLTRB(5, 0, 0, 3),
-                  child: Row(
-                    children:[
-                    RichText(
-                        text:  const TextSpan(
-                            style:TextStyle(fontSize: 16, color: Colors.black) ,
-                            children:<TextSpan>[
-                              TextSpan(text: '분실날짜 : ', style: TextStyle(fontWeight: FontWeight.bold)),
-                            ]
-                        )
-                    ),
-                   TextButton(
-                    onPressed : () async {LostDate= await _selectDate(context,LostDate); },
-                    child:Row(
-                      children: <Widget>[
-                        Text(formatter.format(LostDate)),
-                        const Icon(Icons.calendar_month) ,
-                      ]
+                  margin: const EdgeInsets.fromLTRB(5, 3, 5,0),
+                  padding: const EdgeInsets.fromLTRB(5,0, 5, 0),
+                child:Align(
+                  alignment:Alignment.topLeft ,
+                  child:   RichText(
+                      text:   const TextSpan(
+                          style:TextStyle(fontSize: 16, color: Colors.black) ,
+                          children:<TextSpan>[
+                            TextSpan(text: ' 제목 ', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ]
+                      )
                   ),
                 ),
-                  ]
                     ),
-                )    ,
+                Container(
 
+                  margin: const EdgeInsets.fromLTRB(5, 3, 5,0),
+                  padding: const EdgeInsets.fromLTRB(5,10, 5, 0),
+                  child:  TextField(
+                      controller: TitleController,
+                      decoration: InputDecoration(
+                        border : OutlineInputBorder(
+                          borderSide: const BorderSide(width: 1, color: Colors.grey),
+                          borderRadius: BorderRadius.circular(0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 1, color: Colors.grey),
+                          borderRadius: BorderRadius.circular(0),
+                        ),
+                        fillColor: Colors.white,
+                        filled: true, labelText: '제목을 입력해주세요',
+                      )
+                  ),
+                ),//여기까지 제목칸
 
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 0),
-                  margin:const EdgeInsets.fromLTRB(5, 0, 0, 3),
+                  margin: const EdgeInsets.fromLTRB(5, 3, 5,10),
+                  padding: const EdgeInsets.fromLTRB(5,10, 5, 0),
                   child:Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            flex:1,
 
-                    children:[
-                      Container(
-                        child:Row(
-                         children: [
+                            child: RichText(
+                              text:  const TextSpan(
+                                  style:TextStyle(fontSize: 16, color: Colors.black) ,
+                                  children:<TextSpan>[
+                                    TextSpan(text: '분류       ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  ]
+                              )
+                          ),
+                          ),
                            Flexible(
-                             fit:FlexFit.tight,
-                             flex:1,
-                            child : RichText(
+                              flex: 3,
+                              fit: FlexFit.tight,
+                              child:Container(
+                                height: 40,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(0),
+                                      border: Border.all(color: Colors.lightBlue)
+                                  ),
+                              child:DropdownButtonHideUnderline(
+                               child: DropdownButton<String>(
+                                isExpanded: true,
+                                value: _selectedValue,
+
+                                items: _valueList.map(
+
+                                      (String value) {
+                                    return DropdownMenuItem <String>(
+                                      value: value,
+                                      child: Text( value,style: const TextStyle(fontSize: 15),
+                                        textAlign: TextAlign.center,
+                                      ),
+
+                                    );
+                                  },
+                                ).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    _selectedValue =  value!;
+                                  });
+
+                                },
+
+
+                              )
+                              )
+                              ,
+
+                              )
+                          ),
+                        ],//첫번쨰 로우끝
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      )
+                      ,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          Flexible(
+                            flex:1,
+                            child:RichText(
+                                text:  const TextSpan(
+                                    style:TextStyle(fontSize: 16, color: Colors.black) ,
+                                    children:<TextSpan>[
+                                      TextSpan(text: '분실날짜  ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ]
+                                )
+                            ),
+                          ),
+
+                          Flexible(
+                            flex:3,
+                           fit: FlexFit.tight,
+                           child:Container(
+                             decoration: BoxDecoration(
+                                 borderRadius: BorderRadius.circular(0),
+                                 border: Border.all(color: Colors.lightBlue)
+                             ),
+                             height: 40,
+                           child:TextButton(
+
+                            onPressed : () async {LostDate= await _selectDate(context,LostDate); },
+                            child:Row(
+                                children: <Widget>[
+                                  Text(formatter.format(LostDate),textAlign: TextAlign.center,),
+                                  const Icon(Icons.calendar_month) ,
+                                ]
+                            ),
+                          ),
+                          )
+                          )
+                        ],
+                      )
+                      ,
+                    ],
+
+
+                  )
+                )
+                ,
+
+                Container(
+                    margin: const EdgeInsets.fromLTRB(5, 3, 5,10),
+                    padding: const EdgeInsets.fromLTRB(5,0, 5, 0),
+
+                        child:Column(
+                         children: [
+                            Align(
+                               alignment:Alignment.topLeft,
+                              child: RichText(
                                text:  const TextSpan(
                                    style:TextStyle(fontSize: 16, color: Colors.black) ,
                                    children:<TextSpan>[
-                                     TextSpan(text: '분실장소 : ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                     TextSpan(text: '분실장소  ', style: TextStyle(fontWeight: FontWeight.bold)),
                                    ]
                                )
                            ),
-                                 )
-                           , const Flexible(
-                             fit:FlexFit.tight,
-                             flex:3,
-                            child: TextField(
+                            ),
+                           const SizedBox(
+                             height: 17,
+                           ),
+                             SizedBox(
+                               height: 40,
+                              child:TextField(
+                                  controller: LostwhereController,
                                decoration: InputDecoration(
-                                 border : InputBorder.none,
-
-                                 focusedBorder: InputBorder.none,
+                                 border : OutlineInputBorder(
+                                   borderSide: const BorderSide(width: 1, color: Colors.grey),
+                                   borderRadius: BorderRadius.circular(0),
+                                 ),
+                                 focusedBorder: OutlineInputBorder(
+                                   borderSide: const BorderSide(width: 1, color: Colors.grey),
+                                   borderRadius: BorderRadius.circular(0),
+                                 ),
                                  fillColor: Colors.white,
                                  filled: true,
                                  labelText: '분실장소를 입력해주세요',
                                )
-                           )
+                                    ,style:const TextStyle(fontSize: 13)
                            ),
-                        ],
-
+                )
+                              ],
                         )
-                      ),
+                ),
 
+                            const Divider(
+                          color: Colors.grey
 
+                             ) ,
+                Container(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                margin:const EdgeInsets.fromLTRB(5, 0, 5, 3),
 
-
-                        Column(
-                         children : [
+                         child: Column(
+                             children : [
                            Align(
                                     alignment: Alignment.topCenter,
                            child : imageFile != null
@@ -259,9 +401,10 @@ class MyLostwrite extends State<Lostwrite> {
 
                            )
                            )
-                         ]
-                       )
+
+
                       ,
+
                                    Row(
                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                        mainAxisSize: MainAxisSize.min,
@@ -273,35 +416,50 @@ class MyLostwrite extends State<Lostwrite> {
                         ],
                       )
                       ,
-                      Container(
-                          child:Row(
-                            children: [
-                              Flexible(
-                                fit:FlexFit.tight,
-                                flex:1,
-                                child : RichText(
-                                    text:  const TextSpan(
+                            const Divider(
+                          color: Colors.grey
+
+                      ) ,
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(5, 3, 5,10),
+                                padding: const EdgeInsets.fromLTRB(5,10, 5, 0),
+                                child:Column(
+                                    children: [
+                                      Align(
+                                        alignment:Alignment.topLeft ,
+                                       child:   RichText(
+                                         text:   const TextSpan(
                                         style:TextStyle(fontSize: 16, color: Colors.black) ,
                                         children:<TextSpan>[
-                                          TextSpan(text: '특이사항 : ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                          TextSpan(text: ' 특이사항 ', style: TextStyle(fontWeight: FontWeight.bold)),
                                         ]
                                     )
                                 ),
-                              )
-                              , const Flexible(
-                                  fit:FlexFit.tight,
-                                  flex:3,
-                                  child: TextField(
-                                      decoration: InputDecoration(
-                                        border : InputBorder.none,
-
-                                        focusedBorder: InputBorder.none,
+                                      ),
+                                          const SizedBox(
+                                            height: 17,
+                                          ),
+                                           TextField(
+                                             controller: Content,
+                                             minLines: 4,
+                                             keyboardType: TextInputType.multiline,
+                                             maxLines: null,
+                                           decoration: InputDecoration(
+                                             border : OutlineInputBorder(
+                                               borderSide: const BorderSide(width: 1, color: Colors.grey),
+                                               borderRadius: BorderRadius.circular(0),
+                                             ),
+                                             focusedBorder: OutlineInputBorder(
+                                               borderSide: const BorderSide(width: 1, color: Colors.grey),
+                                               borderRadius: BorderRadius.circular(0),
+                                             ),
                                         fillColor: Colors.white,
                                         filled: true,
                                         labelText: '특이사항을 입력해주세요',
-                                      )
+                                      ),
+                                            style:const TextStyle(fontSize: 13),
                                   )
-                              ),
+                              ,
                             ],
 
                           )
@@ -311,11 +469,19 @@ class MyLostwrite extends State<Lostwrite> {
                        ),
 
                 Container(
-                width:  double.infinity
-                ,
-                    height: 60,
-                child:TextButton(
-                    onPressed: (){},
+                width:  double.infinity,
+                  padding: const EdgeInsets.fromLTRB(0,0, 0, 0),
+
+                  height: 60,
+                 child:TextButton(
+                    onPressed: (){
+                      print(_selectedValue);
+                      print(LostDate);
+                      print(TitleController.text);
+                      print(LostwhereController.text);
+                      print(Content.text);
+                      print(imageFile);
+                    },
                     child:const Text("등록",style:  TextStyle(fontSize:20,color: Colors.white),),
                     style: ButtonStyle(
                       backgroundColor:   MaterialStateProperty.all(Colors.lightBlue),

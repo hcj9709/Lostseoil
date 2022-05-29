@@ -7,8 +7,8 @@ import 'package:intl/intl.dart';
 
 import '../Dialog/dialog.dart';
 import '../Dialog/timesetdialog.dart';
-import '../dropdown/dropdownbutton.dart';
-import '../dropdown/filterlistdropdown.dart';
+
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 class Myfilter extends StatefulWidget {
@@ -21,7 +21,8 @@ class Myfilter extends StatefulWidget {
 class Mylostfilter extends State<Myfilter> {
   int counter = 0;
   var formatter = DateFormat("yyyy-MM-dd");
-
+  final _valueList = ['전체', '전자기기', '카드','지갑','충전기','책'];
+  var _selectedValue = '전체';
 
   DateTime startDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
   DateTime endDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
@@ -33,7 +34,24 @@ class Mylostfilter extends State<Myfilter> {
         initialDate: date,
         firstDate: DateTime(2015),
         lastDate: DateTime.now(),
-
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Colors.lightBlue, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: Colors.black, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Colors.red, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
       );
 
     if (pickedDate != null && pickedDate != date ) {
@@ -56,17 +74,7 @@ class Mylostfilter extends State<Myfilter> {
 
 
     return  MaterialApp(
-        localizationsDelegates: const [
-          // ... app-specific localization delegate[s] here
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          DefaultCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en', 'US'), // English
-          Locale('ko', 'KR'), // KOREAN
-          // ... other locales the app supports
-        ],
+
         home:
         Scaffold(
           resizeToAvoidBottomInset: true , //이걸넣어 키보드가 올라왔을떄 화면이 밀리도록 설정
@@ -121,7 +129,30 @@ class Mylostfilter extends State<Myfilter> {
                       ),
                       borderRadius: BorderRadius.circular(0)
                   ),
-                    child: const Filterdropdown(),
+                    child: DropdownButtonHideUnderline(
+
+                        child:DropdownButton<String>(
+                          isExpanded: true,
+                          value: _selectedValue,
+                          items: _valueList.map(
+                                (String value) {
+                              return DropdownMenuItem <String>(
+                                value: value,
+                                child: Text( value,style: const TextStyle(fontSize: 15),),
+
+                              );
+                            },
+                          ).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selectedValue =  value!;
+                            });
+                          },
+
+
+                        )
+
+                    ),
                 ),
 
                     const SizedBox(height: 10.0),
@@ -183,7 +214,10 @@ class Mylostfilter extends State<Myfilter> {
                     SizedBox(
                       width: 350,
                       child:TextButton(
-                          onPressed: (){} ,
+                          onPressed: (){
+                            print(_selectedValue);
+
+                          } ,
                           child: const Text('검색',style: TextStyle(fontSize:20,color: Colors.white),),
                           style: ButtonStyle(
                             backgroundColor:   MaterialStateProperty.all(Colors.lightBlue),
