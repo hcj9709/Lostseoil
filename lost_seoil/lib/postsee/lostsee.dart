@@ -17,12 +17,14 @@ class MyLostsee extends State<Lostsee> {
    String student_id ="";
    String Title= "" ;
    String catefory = "전체";
-  late String name ;
-  late String LostDate ;
-  late String LostLocation ;
-  late String  content;
-    DateTime Time = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
-  //String Time="";
+   String name='' ;
+   String LostDate ="" ;
+   String LostLocation="" ;
+   String  content="";
+
+   // DateTime Time = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
+  String Time="";
+
   @override
   initState()   {
     super.initState();
@@ -46,16 +48,25 @@ class MyLostsee extends State<Lostsee> {
         print("셋 스테이트");//돌아가는지 확인 하기위해 사용
         student_id= jsonEncode(response.data[0]['student_id']);//이걸써야 데이터 불러옰있음
         print(student_id);
-        Title= jsonEncode(response.data[0]['title']);
+        Title= jsonEncode(response.data[0]['title']).replaceAll("\"", "");
         print(Title);
-        LostDate=  jsonEncode(response.data[0]['lostdate']) ;
+        name= jsonEncode(response.data[0]['name']).replaceAll("\"", "");
+        print(name);
+        LostDate=  jsonEncode(response.data[0]['lostdate']).replaceAll("\"", "");
         print(LostDate);
-
-        Time= DateTime.parse(jsonEncode(response.data[0]['lostdate'])) ;
+         Time= jsonEncode(response.data[0]['time']).replaceAll("\"", "");
         print(12);
-        final StringTime = formatter.format(Time);
+
+        content = jsonEncode(response.data[0]['content']).replaceAll("\"", "");
+
+        print(content);
+
+        LostLocation = jsonEncode(response.data[0]['location']).replaceAll("\"", "");
+
+          print(LostLocation);
+
           print(Time);
-          print(StringTime);
+
         if (response.statusCode==200) {
           print("불러오기 성공");
         }
@@ -90,10 +101,14 @@ class MyLostsee extends State<Lostsee> {
         ,
         body:   SingleChildScrollView(
           child:Container(
+              margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Column(
               children: [
                 Row(
-                  children: [Text("습득물 -> 주변기기")],
+                  children: const [
+                    Text("습득물 -> 주변기기",style: TextStyle(color: Colors.lightBlue,fontSize: 8),)
+                  ],
                 ),
                 Text(Title),
                 Row(
@@ -104,7 +119,10 @@ class MyLostsee extends State<Lostsee> {
                             children:<TextSpan>[
                               const TextSpan(text: '작성자 : ', style: TextStyle(fontWeight: FontWeight.bold)),
                               TextSpan(text: student_id),
-                              //TextSpan(text:StringTime.toString()),
+                              const TextSpan(text: "_"),
+                              TextSpan(text:name),
+                              const TextSpan(text:"   "),
+                              TextSpan(text:Time),
 
                             ]
                         )
@@ -128,7 +146,7 @@ class MyLostsee extends State<Lostsee> {
                             style:const TextStyle(fontSize: 12, color: Colors.black) ,
                             children:<TextSpan>[
                               const TextSpan(text: '분실일자 : ', style: TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(text: student_id),
+                              TextSpan(text: LostDate),
                               //TextSpan(text:StringTime.toString()),
 
                             ]
@@ -143,7 +161,7 @@ class MyLostsee extends State<Lostsee> {
                             style:const TextStyle(fontSize: 12, color: Colors.black) ,
                             children:<TextSpan>[
                               const TextSpan(text: '분실장소 : ', style: TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(text: student_id),
+                              TextSpan(text: LostLocation.replaceAll("\"", "")),
                               //TextSpan(text:StringTime.toString()),
 
                             ]
@@ -152,20 +170,31 @@ class MyLostsee extends State<Lostsee> {
                   ],
                 ),
                 Row(
+
                   children: [
                     RichText(
-                        text:   TextSpan(
-                            style:const TextStyle(fontSize: 12, color: Colors.black) ,
+                        maxLines: 10,
+                        text:   const TextSpan(
+                            style:TextStyle(fontSize: 12, color: Colors.black) ,
                             children:<TextSpan>[
-                              const TextSpan(text: '특이사항 : ', style: TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(text: student_id),
+                              TextSpan(text: '특이사항 : ', style: TextStyle(fontWeight: FontWeight.bold)),
+
+
                               //TextSpan(text:StringTime.toString()),
 
                             ]
                         )
                     ),
-                  ],
+                    Expanded(
+                     child:Text(content,     maxLines: 3,
+                         textAlign: TextAlign.left,
+
+                      softWrap: true,   overflow: TextOverflow.clip  )
+                    )
+                      ],
+
                 ),
+
               ],
             ),
           )

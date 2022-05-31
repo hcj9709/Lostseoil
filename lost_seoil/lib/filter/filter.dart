@@ -21,6 +21,9 @@ class Myfilter extends StatefulWidget {
 class Mylostfilter extends State<Myfilter> {
   int counter = 0;
   var formatter = DateFormat("yyyy-MM-dd");
+  final _findvalueList = ['전체','제목', '제목+내용', '글쓴이'];
+  var _findselectedValue = '전체';
+
   final _valueList = ['전체', '전자기기', '카드','지갑','충전기','책'];
   var _selectedValue = '전체';
 
@@ -95,18 +98,73 @@ class Mylostfilter extends State<Myfilter> {
                 alignment: Alignment.bottomLeft,
                 child: Column(
                   children:  [
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child:Row(
-                            children:const [
-                              Text("제목명",textAlign: TextAlign.left,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
-                            ]
+                    Container(
+                        width: double.infinity,
+                        height:50 ,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.lightBlue,
+                                width: 1,
+                                style: BorderStyle.solid
+                            ),
+                            borderRadius: BorderRadius.circular(0)
+                        ),
+                        child:SizedBox( //검색하는 쪽 넣을 필드
+                          width: double.infinity,
+                          child: Row(
+                            children:
+                            [
+                              Flexible(
+                                fit:FlexFit.tight,
+                                flex: 2,
+                                child: DropdownButtonHideUnderline(
+
+                                    child:DropdownButton<String>(
+                                      isExpanded: true,
+                                      value: _findselectedValue,
+                                      items: _findvalueList.map(
+                                            (String value) {
+                                          return DropdownMenuItem <String>(
+                                            value: value,
+                                            child: Text( value,style: const TextStyle(fontSize: 13),),
+
+                                          );
+                                        },
+                                      ).toList(),
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          _findselectedValue =  value!;
+                                        });
+                                      },
+
+
+                                    )
+
+                                ),
+                              )
+                              ,
+                              const Flexible(
+                                fit:FlexFit.tight,
+                                flex: 7,
+                                child: TextField(
+
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      fillColor: Colors.white,
+                                      filled: true, labelText: '검색어를 입력해주세요',
+                                    )
+                                ),
+                              )
+                              ,
+
+                            ],
+                          ),
                         )
                     ),
                     const SizedBox(height: 3.0),
-                    const TextField(decoration: InputDecoration( filled: true, labelText: '찾으실 제목을 입력해주세요',
-                      fillColor: Colors.white,
-                    )),
+
                     const SizedBox(height: 12.0),
                     Align(
                         alignment: Alignment.centerLeft,

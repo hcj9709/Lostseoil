@@ -57,8 +57,10 @@ class StateLogin_page extends State<Login_page> {
         //islogined= response.data['success']; //이렇게 해야 db에 저장되어있는 "석세스" 라는 값을 받을수있음
         if (response.statusCode==200) {
           final name = response.data['name'];
-          final student_id = response.data['student_id'];
-          Navigator.push(context,MaterialPageRoute(builder:(context)=>  const MyApp()));
+          final student_id = response.data['id'];
+          print(name);
+          print(student_id);
+          Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyApp(name: name ,student_id: student_id )));
           print("로그인성공");
         }
         else{
@@ -136,7 +138,7 @@ class StateLogin_page extends State<Login_page> {
                           onPressed: ()  {
                                 //ㅁㄴㅇㄴㅁ
 
-                           WidgetsBinding.instance.addPostFrameCallback((_)  {getHttp();});
+                            {getHttp();};
 
 
 

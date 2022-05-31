@@ -12,7 +12,9 @@ import '../menu/menu_drawer.dart';
 
 
 class GetPage extends StatefulWidget{
-  const GetPage({Key? key}) : super(key: key);
+  String name='';
+  int student_id;
+   GetPage({Key? key,required this.student_id , required this.name}) : super(key: key);
   @override
   GetPagescreen createState()=> GetPagescreen();
 }
@@ -31,7 +33,7 @@ class  GetPagescreen extends State<GetPage> {
           resizeToAvoidBottomInset: true , //이걸넣어 키보드가 올라왔을떄 화면이 밀리도록 설정
           appBar:const TopBar(),
           //왼쪽위 메뉴 버튼 누르면 나오는 Drawer
-          drawer: const MenuDrawer(
+          drawer:  MenuDrawer(name: widget.name,student_id: widget.student_id,
           ),
           //몸통시작
           body:  SingleChildScrollView(
@@ -49,7 +51,7 @@ class  GetPagescreen extends State<GetPage> {
                       Flexible(
                           fit:FlexFit.tight,
                           flex:1,
-                          child:  TextButton(onPressed:  (){Navigator.push(context,MaterialPageRoute(builder:(context)=> const MyApp()));} ,  child: const Text('분실물',style: TextStyle(fontSize:20,color: Colors.white),),
+                          child:  TextButton(onPressed:  (){Navigator.push(context,MaterialPageRoute(builder:(context)=>  MyApp(name: widget.name ,student_id: widget.student_id )));} ,  child: const Text('분실물',style: TextStyle(fontSize:20,color: Colors.white),),
                               style: ButtonStyle(
                                 // shape : 버튼의 모양을 디자인 하는 기능
                                 backgroundColor:   MaterialStateProperty.all(Colors.lightBlue),

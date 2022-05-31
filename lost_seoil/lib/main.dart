@@ -23,7 +23,7 @@ void main() {
             // ... other locales the app supports
           ],
        title:'Navigator',
-       home:MyTest()
+       home:Login_page()
       ),
   );
 }

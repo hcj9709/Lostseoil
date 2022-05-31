@@ -11,7 +11,12 @@ import '../Dialog/dialog.dart';
 import '../menu/menu_drawer.dart';
 import '../postsee/lostsee.dart';
 class MyApp extends StatefulWidget{
-  const MyApp({Key? key}) : super(key: key);
+  String name;
+  int student_id;
+
+   MyApp({Key? key,required this.student_id , required this.name}) : super(key: key);
+
+
   @override
     MyAppscreen createState()=> MyAppscreen();
 }
@@ -19,6 +24,7 @@ class MyApp extends StatefulWidget{
 
 
 class  MyAppscreen extends State<MyApp> {
+
   final _valueList = ['제목', '제목+내용', '글쓴이'];
   var _selectedValue = '제목';
    final PageController pageController = PageController(
@@ -33,7 +39,8 @@ class  MyAppscreen extends State<MyApp> {
           resizeToAvoidBottomInset: true , //이걸넣어 키보드가 올라왔을떄 화면이 밀리도록 설정
           appBar:const TopBar(),
           //왼쪽위 메뉴 버튼 누르면 나오는 Drawer
-          drawer: const MenuDrawer(
+          drawer:  MenuDrawer(
+            name: widget.name,student_id: widget.student_id,
           ),
           //몸통시작
           body:
@@ -65,7 +72,7 @@ class  MyAppscreen extends State<MyApp> {
                         fit:FlexFit.tight,
                         flex:1,
                         child:
-                        TextButton(onPressed: (){Navigator.push(context,MaterialPageRoute(builder:(context)=> const GetPage()));} ,  child: const Text('습득물',style: TextStyle(fontSize:20,color: Colors.white),),
+                        TextButton(onPressed: (){Navigator.push(context,MaterialPageRoute(builder:(context)=>  GetPage(name: widget.name,student_id: widget.student_id,)));} ,  child: const Text('습득물',style: TextStyle(fontSize:20,color: Colors.white),),
                             style: ButtonStyle(
                               backgroundColor:   MaterialStateProperty.all(Colors.lightBlue),
 
@@ -108,7 +115,7 @@ class  MyAppscreen extends State<MyApp> {
                       fit:FlexFit.tight,
                       flex:1,
 
-                       child: ElevatedButton( onPressed: () { Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Lostwrite())); },
+                       child: ElevatedButton( onPressed: () { Navigator.push(context,MaterialPageRoute(builder:(context)=>   Lostwrite(name: widget.name,student_id: widget.student_id))); },
                         child: const Text("글쓰기")),
 
                     ),
