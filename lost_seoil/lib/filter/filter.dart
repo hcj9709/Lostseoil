@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:core';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,23 +13,72 @@ import '../Dialog/timesetdialog.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../mainform/lostseoild_mainform.dart';
+
 class Myfilter extends StatefulWidget {
-  const Myfilter({Key? key}) : super(key: key);
+  String name;
+  int student_id;
+   Myfilter({Key? key,required this.student_id , required this.name}) : super(key: key);
   @override
   Mylostfilter createState() => Mylostfilter();
 
 }
 
 class Mylostfilter extends State<Myfilter> {
+  final searchText = TextEditingController(
+    text:""
+  );
+
   int counter = 0;
   var formatter = DateFormat("yyyy-MM-dd");
+  final _findvalueList = ['전체','제목', '제목+내용', '글쓴이'];
+  var _findselectedValue = '전체';
+
   final _valueList = ['전체', '전자기기', '카드','지갑','충전기','책'];
-  var _selectedValue = '전체';
+  String _selectedValue = '전체';
+  DateTime? startDate ;
+   DateTime? endDate;
+ // DateTime startDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
+ // DateTime endDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
+  Future<bool> GetFilter()  async { //함수내용은 Dio 이나 이름을 바꾸지 않았음
+    try {
+      Dio dio = Dio();
 
-  DateTime startDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
-  DateTime endDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
 
-  Future<DateTime> _selectDate(BuildContext context,DateTime date) async {
+      Response response = await dio.get('http://wnsgnl97.myqnapcloud.com:3001/api/posting/',
+          queryParameters: {
+            'title_content':searchText.text,
+            'startDate':startDate.toString(),
+            'endDate':endDate.toString(),
+            'category':_selectedValue
+      }
+      );
+      print("12");
+      //텍스트필드에 2개의 값을 json을 이용하여 인코드한다음 클라이언트가 data를 보내면 서버가 data를 받고 Db에 저장된값을 보내줌
+      setState((){
+        print("포스트");//돌아가는지 확인 하기위해 사용
+        if (response.statusCode==200) {
+          Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyApp(name: widget.name, student_id: widget.student_id, )));
+          print("보내기 성공");
+        }
+        else{
+          //Future.delayed(Duration.zero, () => LoginfailDialog(context));
+          print("보내기 실패");
+        }
+      });
+
+    } catch (e) {
+      print("보내기 실패");
+    }
+    finally{
+
+    }
+    return false;
+  }
+
+
+
+  Future<DateTime?> _selectDate(BuildContext context,DateTime date) async {
     final DateTime? pickedDate = await showDatePicker(
 
         context: context,
@@ -58,14 +109,17 @@ class Mylostfilter extends State<Myfilter> {
       setState(() {
 
         date = pickedDate;
-     //  String formatDate = DateFormat('yy/MM/dd - HH:mm:ss').format(currentDate);
+     //  String formatDate = DateFormat('yy/MM/dd - HH:mm:ss').format(currentDate);\
+
       });
+      return date;
     }
-    return date;
+       return null;
   }//기간나오는 캘린더 다이얼로그 부분
   @override
   void dispose(){
   super.dispose();
+  searchText.dispose();
   }
 
 
@@ -90,23 +144,64 @@ class Mylostfilter extends State<Myfilter> {
           ,
           //몸통시작
           body:   SingleChildScrollView(
-            child:Container(
+            child:GestureDetector(
+               onTap: () {
+                 FocusScope.of(context).unfocus();
+                  },
+               child:Container(
                 padding: const EdgeInsets.fromLTRB(20, 50, 20, 120),
                 alignment: Alignment.bottomLeft,
                 child: Column(
                   children:  [
+
                     Align(
                         alignment: Alignment.centerLeft,
                         child:Row(
                             children:const [
-                              Text("제목명",textAlign: TextAlign.left,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                              Text("검색어 ",textAlign: TextAlign.left,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
                             ]
                         )
                     ),
+                    const SizedBox(height: 12.0),
+                    Container(
+                        width: double.infinity,
+                        height:55 ,
+                        padding:  const EdgeInsets.symmetric(horizontal: 2),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.lightBlue,
+                                width: 1,
+                                style: BorderStyle.solid
+                            ),
+                            borderRadius: BorderRadius.circular(1)
+                        ),
+                        child:SizedBox( //검색하는 쪽 넣을 필드
+                          width: double.infinity,
+                          child: Row(
+                            children:
+                             [
+                              Flexible(
+                                fit:FlexFit.tight,
+                                child:  TextField(
+                                    controller: searchText,
+                          decoration:  const InputDecoration(
+                          border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            fillColor: Colors.white,
+                            filled: true, labelText: '검색어를 입력해주세요',
+                          )
+                        ),
+                              )
+
+
+
+
+                            ],
+                          ),
+                        )
+                    ),
                     const SizedBox(height: 3.0),
-                    const TextField(decoration: InputDecoration( filled: true, labelText: '찾으실 제목을 입력해주세요',
-                      fillColor: Colors.white,
-                    )),
+
                     const SizedBox(height: 12.0),
                     Align(
                         alignment: Alignment.centerLeft,
@@ -173,20 +268,22 @@ class Mylostfilter extends State<Myfilter> {
                         Flexible(
                           fit:FlexFit.tight,
                          flex:4,
+
                            child: TextButton(
-                             onPressed : () async {startDate= await  _selectDate(context,startDate); },
+                             onPressed : () async {startDate = await  _selectDate(context,
+                                startDate!= null? startDate! : DateTime.now()
+                             ); },
                                child:Row(
                                    children: <Widget>[
-                                   Text(formatter.format(startDate)),
+                                     startDate != null?
+                                   Text(formatter.format(startDate!)): const Text("시작 날짜 선택",style: TextStyle(fontSize: 13),) ,
                                    const Icon(Icons.calendar_month),
                                   ]
                               ),
                         ),
                         ),
 
-                        // Text(formatter.format(startDate)),
-                       // IconButton(onPressed : () async {startDate= await  _selectDate(context,startDate); } , icon: const Icon(Icons.calendar_month) ,),
-                        //위에가 시작기간
+
 
                         const Flexible(
                           flex:1,
@@ -198,10 +295,13 @@ class Mylostfilter extends State<Myfilter> {
                           flex:4,
                           fit:FlexFit.tight,
                           child: TextButton(
-                          onPressed : () async {endDate= await _selectDate(context,endDate); },
+                            onPressed : () async {endDate = await  _selectDate(context,
+                                endDate!= null? endDate! : DateTime.now()
+                            ); },
                            child:Row(
                               children: <Widget>[
-                                Text(formatter.format(endDate)),
+                                endDate != null?
+                                Text(formatter.format(endDate!)): const Text("끝 날짜 선택",style: TextStyle(fontSize: 13),) ,
                                 const Icon(Icons.calendar_month) ,
                               ]
                           ),
@@ -215,8 +315,14 @@ class Mylostfilter extends State<Myfilter> {
                       width: 350,
                       child:TextButton(
                           onPressed: (){
+                            print(searchText.text);
                             print(_selectedValue);
 
+
+
+                            print(startDate);
+                            print(endDate);
+                            GetFilter();
                           } ,
                           child: const Text('검색',style: TextStyle(fontSize:20,color: Colors.white),),
                           style: ButtonStyle(
@@ -237,11 +343,11 @@ class Mylostfilter extends State<Myfilter> {
 
             ),
           ),
+          ),
           bottomNavigationBar:const BottomAppBar(),
         )
     );
   }
-
 
 
 }

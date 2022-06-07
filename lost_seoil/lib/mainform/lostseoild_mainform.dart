@@ -37,7 +37,7 @@ class  MyAppscreen extends State<MyApp> {
         home:
         Scaffold(
           resizeToAvoidBottomInset: true , //이걸넣어 키보드가 올라왔을떄 화면이 밀리도록 설정
-          appBar:const TopBar(),
+          appBar:TopBar(),
           //왼쪽위 메뉴 버튼 누르면 나오는 Drawer
           drawer:  MenuDrawer(
             name: widget.name,student_id: widget.student_id,
@@ -115,7 +115,7 @@ class  MyAppscreen extends State<MyApp> {
                       fit:FlexFit.tight,
                       flex:1,
 
-                       child: ElevatedButton( onPressed: () { Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Lostwrite())); },
+                       child: ElevatedButton( onPressed: () { Navigator.push(context,MaterialPageRoute(builder:(context)=>   Lostwrite(name: widget.name,student_id: widget.student_id))); },
                         child: const Text("글쓰기")),
 
                     ),
@@ -147,7 +147,7 @@ class  MyAppscreen extends State<MyApp> {
 
                       subtitle: const Text("  6시간",style: TextStyle(color:Colors.lightBlue),),//등록일자 받고
                       onTap: () {
-                        Navigator.push(context,MaterialPageRoute(builder:(context)=>   Lostsee()));
+                        Navigator.push(context,MaterialPageRoute(builder:(context)=>   Lostsee(LostIndex: 1,)));
 
                       },
                     ),
@@ -220,7 +220,7 @@ class  MyAppscreen extends State<MyApp> {
                     //Text("필터 필드")
                   Align(
                     alignment: Alignment.topRight,
-                   child: TextButton.icon(onPressed: (){Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Myfilter()));}, icon:  const Icon(Icons.tune,), label: const Text("필터"),)
+                   child: TextButton.icon(onPressed: (){Navigator.push(context,MaterialPageRoute(builder:(context)=>  Myfilter(name: widget.name, student_id: widget.student_id,)));}, icon:  const Icon(Icons.tune,), label: const Text("필터"),)
                   )
                   ],
 

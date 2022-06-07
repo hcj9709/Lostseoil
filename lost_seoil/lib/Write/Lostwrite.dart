@@ -1,20 +1,28 @@
 
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import '../Dialog/loginfail.dart';
+import '../mainform/lostseoild_mainform.dart';
 
 class Lostwrite extends StatefulWidget {
-  const Lostwrite({Key? key}) : super(key: key);
+  String name;
+  int student_id;
+  Lostwrite({Key? key,required this.name,required this.student_id }) : super(key: key);
   @override
   MyLostwrite createState() => MyLostwrite();
 
 }
 
 class MyLostwrite extends State<Lostwrite> {
-    File? imageFile  = File(''); // 카메라/갤러리에서 사진 가져올 때 사용함 (image_picker)
+    File? imageFile; // 카메라/갤러리에서 사진 가져올 때 사용함 (image_picker)
   final ImagePicker _picker = ImagePicker(); // 카메라/갤러리에서 사진 가져올 때 사용함 (image_picker)
   late String filtertext;
     final _valueList = ['전체', '전자기기', '카드','지갑','충전기','책','기타'];
@@ -22,6 +30,7 @@ class MyLostwrite extends State<Lostwrite> {
     final TitleController = TextEditingController();
     final LostwhereController = TextEditingController();
     final Content = TextEditingController();
+    int losttype=1;
     @override
     void dispose() {
       // TODO: implement dispose
@@ -77,23 +86,15 @@ class MyLostwrite extends State<Lostwrite> {
   }
 
   Future <File?> takePhoto(ImageSource source) async {
-    final XFile? pickedFile = await _picker.pickImage(source: source);
+    final XFile? pickedFile = await _picker.pickImage(source: source,maxHeight: 1080,
+      maxWidth: 1920,imageQuality: 100);
     if(pickedFile==null){return null;}
     setState(() {
-      imageFile = File(pickedFile.path)    ;
+      imageFile = File(pickedFile.path)   ;
     });
 
   }
-  /*
-  Future getImageCamera() async {
 
-    // for camera
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera, maxWidth: 480, maxHeight: 600);
-    setState(() {
-      imageFile = pickedFile as PickedFile?;
-    });
-  }
-  */
 
   TextEditingController dateinput = TextEditingController();
 
@@ -156,7 +157,56 @@ class MyLostwrite extends State<Lostwrite> {
   }//기간나오는 캘린더 다이얼로그 부분
 
 
+    Future<bool> PostImage(String url, File file) async {
+      final dio = new Dio();
+      final len = await file.length();
+      final response = await dio.put(url,
+          data: file.openRead(),
+          options: Options(headers: {
+            Headers.contentLengthHeader: len
+            ,Headers.contentTypeHeader : "image/jpg"
+          } // set content-length
+          ));
+      return true;
+    }
 
+
+
+
+    Future<bool> PostData()  async { //함수내용은 Dio 이나 이름을 바꾸지 않았음
+      try {
+        Dio dio = Dio();
+
+        var data = {'student_id': widget.student_id, 'title': TitleController.text,'content':Content.text ,'image': imageFile.toString(),'category' : _selectedValue, 'losttype': losttype,'lostdate':LostDate.toString() ,'location':LostwhereController.text};
+
+        var body = json.encode(data); //데이타 피라미터를 json 인코드함
+        Response response = await dio.post('http://wnsgnl97.myqnapcloud.com:3001/api/posting/makePosting',
+            data:body);
+        print(response.data['url']);
+        PostImage.call(response.data['url'],imageFile!);
+        //텍스트필드에 2개의 값을 json을 이용하여 인코드한다음 클라이언트가 data를 보내면 서버가 data를 받고 Db에 저장된값을 보내줌
+              setState((){
+          print("포스트");//돌아가는지 확인 하기위해 사용
+          if (response.statusCode==200) {
+
+            Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyApp(name: widget.name, student_id: widget.student_id, )));
+            print("글올리기 성공");
+          }
+          else{
+            Future.delayed(Duration.zero, () => LoginfailDialog(context));
+            print("글올리기실패");
+
+          }
+        });
+
+      } catch (e) {
+        print("서버에러");
+      }
+      finally{
+
+      }
+      return false;
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +224,10 @@ class MyLostwrite extends State<Lostwrite> {
         //왼쪽위 메뉴 버튼 누르면 나오는 Drawer
         ,
         body:SingleChildScrollView(
+         child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
           child: Container(
               margin: const EdgeInsets.all(0.5),
               padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -380,7 +434,9 @@ class MyLostwrite extends State<Lostwrite> {
 
                             const Divider(
                           color: Colors.grey
-
+                              ,thickness: 1,
+                              indent: 10,
+                              endIndent: 10,
                              ) ,
                 Container(
                 padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -417,7 +473,10 @@ class MyLostwrite extends State<Lostwrite> {
                       )
                       ,
                             const Divider(
-                          color: Colors.grey
+                          color: Colors.grey,
+                              thickness: 1,
+                              indent: 10,
+                              endIndent: 10,
 
                       ) ,
                             Container(
@@ -475,12 +534,19 @@ class MyLostwrite extends State<Lostwrite> {
                   height: 60,
                  child:TextButton(
                     onPressed: (){
+                      print(TitleController.text);
                       print(_selectedValue);
                       print(LostDate);
-                      print(TitleController.text);
+
                       print(LostwhereController.text);
                       print(Content.text);
                       print(imageFile);
+                      if(TitleController.text!=''&&LostwhereController.text!=''&&Content.text!=''){
+                      PostData();
+                      }
+                      else{
+                        print("다입력해");
+                      }
                     },
                     child:const Text("등록",style:  TextStyle(fontSize:20,color: Colors.white),),
                     style: ButtonStyle(
@@ -500,7 +566,7 @@ class MyLostwrite extends State<Lostwrite> {
           ),
 
         ) ,
-
+      )
       )
     );
 

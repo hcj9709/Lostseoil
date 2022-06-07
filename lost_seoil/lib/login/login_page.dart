@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:lost_seoil/mainform/lostseoild_mainform.dart';
 import 'package:http/http.dart' as http;
 import '../Dialog/loginfail.dart';
+import '../mainform/testform.dart';
 import '../share/Switch_login.dart';
 
 // ignore: camel_case_types
@@ -31,7 +32,6 @@ class StateLogin_page extends State<Login_page> {
   @override
    initState()   {
     super.initState();
-
   }
   @override
   void dispose() {
@@ -60,7 +60,7 @@ class StateLogin_page extends State<Login_page> {
           final student_id = response.data['id'];
           print(name);
           print(student_id);
-          Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyApp(name: name ,student_id: student_id )));
+          Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyTest(name: name ,student_id: student_id )));
           print("로그인성공");
         }
         else{
@@ -89,6 +89,7 @@ class StateLogin_page extends State<Login_page> {
           resizeToAvoidBottomInset: true , //바닥이 오버 플로우 일어나지 않도록 하기위해
 
           body: SingleChildScrollView(
+            child:Center(
             child:Container(
                 padding: const EdgeInsets.fromLTRB(20, 100, 20, 120),
                 alignment: Alignment.bottomLeft,
@@ -118,11 +119,16 @@ class StateLogin_page extends State<Login_page> {
                     ),
                     const SizedBox(height: 12.0),
                      TextField(
+                       textInputAction: TextInputAction.go,
+                         onSubmitted: (value) {
+                           getHttp();
+                         },
                       controller: passwordController,
                         obscureText: true,
                         decoration: const InputDecoration( filled: true, labelText: '비밀번호',
                           fillColor: Colors.white,
                         )
+
                          ,
                          onChanged:(text){
                            print(passwordController.text);
@@ -135,13 +141,8 @@ class StateLogin_page extends State<Login_page> {
                     SizedBox(
                       width: 350,
                       child:TextButton(
-                          onPressed: ()  {
-                                //ㅁㄴㅇㄴㅁ
-
-                           WidgetsBinding.instance!.addPostFrameCallback((_)  {getHttp();});
-
-
-
+                          onPressed: () =>{
+                            getHttp()
                           } ,
                           child: const Text('로그인',style: TextStyle(fontSize:20,color: Colors.white),),
                           style: ButtonStyle(
@@ -167,6 +168,7 @@ class StateLogin_page extends State<Login_page> {
                 )
 
             ),
+          )
           )
       )
       ,

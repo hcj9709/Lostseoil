@@ -41,8 +41,9 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             visualDensity: const VisualDensity(horizontal: -4.0, vertical: -2.0), //이부분이 줄여주는 부분이다.
             padding: EdgeInsets.zero,
             icon: const Icon(Icons.search,size: 30 ,),color:Colors.lightBlue, onPressed: () {
-            Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Myfilter()));
-          },),
+           // Navigator.push(context,MaterialPageRoute(builder:(context)=>  const Myfilter()));
+          },
+          ),
 
         ]
 

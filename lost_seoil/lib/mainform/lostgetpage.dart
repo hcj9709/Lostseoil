@@ -31,7 +31,7 @@ class  GetPagescreen extends State<GetPage> {
         home:
         Scaffold(
           resizeToAvoidBottomInset: true , //이걸넣어 키보드가 올라왔을떄 화면이 밀리도록 설정
-          appBar:const TopBar(),
+          appBar:TopBar(),
           //왼쪽위 메뉴 버튼 누르면 나오는 Drawer
           drawer:  MenuDrawer(name: widget.name,student_id: widget.student_id,
           ),
