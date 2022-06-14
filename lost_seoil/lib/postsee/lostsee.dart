@@ -10,10 +10,12 @@ import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 
 import '../Dialog/dialog.dart';
+import '../Dialog/reportDialog.dart';
 
 class Lostsee extends StatefulWidget{
   int LostIndex;
-  Lostsee({Key? key,required this.LostIndex}) : super(key: key);
+  int student_id;
+  Lostsee({Key? key,required this.LostIndex,required this.student_id }) : super(key: key);
   @override
   MyLostsee createState() => MyLostsee();
 
@@ -21,6 +23,7 @@ class Lostsee extends StatefulWidget{
 
 class MyLostsee extends State<Lostsee> {
   var formatter = DateFormat("yyyy-MM-dd");
+  String galleryname="";
    String student_id ="";
    String Title= "" ;
    String category = "전체";
@@ -31,12 +34,18 @@ class MyLostsee extends State<Lostsee> {
    // DateTime Time = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
   String Time="";
   final comment = TextEditingController();
-  String? Imagefile;
-  int commentsieze=0;
-  final List<String> Comments = <String>[];
-  final List<String> Commentsname = <String>[];
-  final List<int> Commentsstudent_id = <int>[];
-  final List<String> CommentsTime = <String>[];
+  String Imagefile = "null";
+  int commentsieze = 0;
+  final List<String> Comments = <String>[""];
+  final List<String> Commentsname = <String>[""];
+  final List<int> Commentsstudent_id = <int>[0];
+  final List<String> CommentsTime = <String>[""];
+  int commentcount = 0;
+
+
+
+
+
   @override
   initState()   {
     super.initState();
@@ -62,19 +71,19 @@ class MyLostsee extends State<Lostsee> {
       print("셋 스테이트");//돌아가는지 확인 하기위해 사용
 
       student_id= jsonEncode(response.data[0]['student_id']);//이걸써야 데이터 불러옰있음
-      print(student_id);
+
       Title= jsonEncode(response.data[0]['title']).replaceAll("\"", "");
-      print(Title);
+
       name= jsonEncode(response.data[0]['name']).replaceAll("\"", "");
-      print(name);
+
       LostDate=  jsonEncode(response.data[0]['lostdate']).replaceAll("\"", "");
-      print(LostDate);
+
       Time= jsonEncode(response.data[0]['time']).replaceAll("\"", "");
-      print(12);
+
 
       content = jsonEncode(response.data[0]['content']).replaceAll("\"", "");
 
-      print(content);
+
 
       LostLocation = jsonEncode(response.data[0]['location']).replaceAll("\"", "");
       category = jsonEncode(response.data[0]['category']).replaceAll("\"", "");
@@ -82,7 +91,7 @@ class MyLostsee extends State<Lostsee> {
         Imagefile = jsonEncode(response.data[0]['image']).replaceAll("\"", "");
       }
       print(Imagefile);
-
+     galleryname = (response.data[0]['losttype'] != 1)? "습득물":"분실물";
 
       if (response.statusCode==200) {
         print("불러오기 성공");
@@ -107,12 +116,14 @@ class MyLostsee extends State<Lostsee> {
           commentsieze = response.data.length;
 
           for(int i = commentsieze-1; i>=0;i--){
+
             Comments.add(response.data[i]['content']);
             Commentsname.add(response.data[i]['name']);
 
             Commentsstudent_id.add(response.data[i]['student_id']);
             print(commentsieze);
             CommentsTime.add(response.data[i]['time']);
+            commentcount++;
           }
           print("불러오기 성공");
         }
@@ -128,7 +139,37 @@ class MyLostsee extends State<Lostsee> {
     }
     return false;
   }
+  Future<bool> PostComment()  async { //함수내용은 Dio 이나 이름을 바꾸지 않았음
+    try {
+      Dio dio = Dio();
+//학번 댓글 내용 게시글번호
+      var data = {'student_id':widget.student_id,'content':comment.text,'posting_id':widget.LostIndex};
+      var body = json.encode(data); //데이타 피라미터를 json 인코드함
 
+      Response response = await dio.post('http://wnsgnl97.myqnapcloud.com:3001/api/posting/makeComment',
+          data:body);
+
+      print("에러발견");
+       setState((){
+        print("포스트");//돌아가는지 확인 하기위해 사용
+        if (response.statusCode==200) {
+          print("댓글 올리기 성공");
+        }
+        else{
+
+          print("글올리기실패");
+
+        }
+      });
+
+    } catch (e) {
+      print("서버에러");
+    }
+    finally{
+
+    }
+    return false;
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -136,7 +177,7 @@ class MyLostsee extends State<Lostsee> {
       home:Scaffold(
         resizeToAvoidBottomInset: false ,
         appBar:AppBar(
-          title: const Text("분실물 게시판"),
+          title:  Text(galleryname+" 게시판"),
           leading:  IconButton(
             icon: const Icon(Icons.arrow_back_ios),color:Colors.white, onPressed: () {
             Navigator.pop(context);
@@ -158,7 +199,7 @@ class MyLostsee extends State<Lostsee> {
               children: [
                 Row(
                   children:  [
-                    Text("분실물 -> "+category,style: const TextStyle(color: Colors.lightBlue,fontSize: 8),)
+                    Text(galleryname+" > "+category,style: const TextStyle(color: Colors.lightBlue,fontSize: 8),)
                   ],
                 ),
                 Align(
@@ -177,7 +218,10 @@ class MyLostsee extends State<Lostsee> {
                         ),
                         PopupMenuItem(child: Text("신고하기")
                           ,value: 2,
-                          onTap: (){print("1:1대화");},
+                          onTap: (){
+                          print("레포트");
+                          ReportDialog(context,setState);
+                          },
                         ),
                       ],
 
@@ -191,18 +235,17 @@ class MyLostsee extends State<Lostsee> {
                   color: Colors.black,
 
                 ),
-
-              if(Imagefile!=null && Imagefile!='null')...[
+                Container(
+                  height: 10,
+                ),
+              if( Imagefile!='null'  )...[
                 Container(
                     height: 270,
-                    child: Image.network(Imagefile!)
+                    child: Image.network(Imagefile)
                 ),
               ]
               else...[
                Container(
-                     height: 150,
-
-                      child: const Text("null image")
                   ),
                     ],
                 Row(
@@ -277,9 +320,9 @@ class MyLostsee extends State<Lostsee> {
                            mainAxisAlignment: MainAxisAlignment.end,
                              children:[
                                 Row(
-                            children: const [
+                            children: [
                                       Text("댓글 "),
-                                      Text("N"),
+                                      Text(commentcount.toString()),
                                     Text("개"),
                             ],
                           )
@@ -300,12 +343,6 @@ class MyLostsee extends State<Lostsee> {
                                       width: MediaQuery.of(context).size.width,
                                       child:Column(
                                           children:[
-                                            ListTile(   leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
-                                              title:  Text(Comments[index]+ index.toString(), style: const TextStyle(fontSize: 10,color: Colors.black),),//DB에 저장된 타이틀 값 받고
-                                              onTap: () {
-                                              },
-
-                                            ),
                                               Container(
                                                 child:Column(
 
@@ -313,16 +350,35 @@ class MyLostsee extends State<Lostsee> {
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                   children: [
-                                                    Image.asset('assets/images/banana.png',width: 50, height: 50),
                                                     Column(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children:[
+                                                        Image.asset('assets/images/banana.png',width: 40, height: 40),
+                                                        Text(" "),
+                                                        Text(" "),
+                                                  ]
+                                                     ),
+                                                        Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
+                                                        PopupMenuButton(
+                                                          child: Text(Commentsstudent_id[index].toString() + Commentsname[index],style:TextStyle(fontSize: 12,)),
+                                                          itemBuilder: (context)=>[
+                                                            PopupMenuItem(child: Text("1:1대화")
+                                                              ,value: 1,
+                                                              onTap: (){print("1:1대화");},
+                                                            ),
+                                                            PopupMenuItem(child: Text("신고하기")
+                                                              ,value: 2,
+                                                              onTap: (){print("1:1대화");},
+                                                            ),
+                                                          ],
 
-                                                      Text(Commentsstudent_id[index].toString() + Commentsname[index]+"\n",style:TextStyle(fontSize: 11,)
-                                                     ),
- 
+
+                                                        ),
                                                         Text(CommentsTime[index],style: TextStyle(fontSize: 10,color: Colors.grey),)
-                                                   , Text("\n\n\n\n"+Comments[index]+ index.toString()
+                                                         , Text("\n"+Comments[index]+ index.toString()+"\n"
                                                             , style: const TextStyle(fontSize: 10,color: Colors.black),),//DB에 저장된 타이틀 값 받고
 
                                                       ],
@@ -381,7 +437,21 @@ class MyLostsee extends State<Lostsee> {
                       color: Colors.lightBlue,
                       size: 30,
                     ),
-                    onTap: (){print("send");}
+                    onTap: (){
+                     if(comment.text!=""){
+                       print(comment.text);
+                       print("send");
+                      PostComment();
+                       Navigator.pushReplacement(
+                           context,
+                           MaterialPageRoute(
+                               builder: (BuildContext context) => super.widget));
+                     }
+                     else{
+                       print("빈칸x");
+                     }
+
+                    }
                   ),
                       border : OutlineInputBorder(
                       borderSide: const BorderSide(width: 1, color: Colors.grey),

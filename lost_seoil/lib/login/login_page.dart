@@ -8,7 +8,7 @@ import 'dart:async';
 import 'package:lost_seoil/mainform/lostseoild_mainform.dart';
 import 'package:http/http.dart' as http;
 import '../Dialog/loginfail.dart';
-import '../mainform/testform.dart';
+
 import '../share/Switch_login.dart';
 
 // ignore: camel_case_types
@@ -60,7 +60,7 @@ class StateLogin_page extends State<Login_page> {
           final student_id = response.data['id'];
           print(name);
           print(student_id);
-          Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyTest(name: name ,student_id: student_id )));
+          Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyApp(name: name ,student_id: student_id )));
           print("로그인성공");
         }
         else{
@@ -71,6 +71,7 @@ class StateLogin_page extends State<Login_page> {
       });
 
     } catch (e) {
+      Future.delayed(Duration.zero, () => LoginfailDialog(context));
       print("서버에러");
     }
     finally{
