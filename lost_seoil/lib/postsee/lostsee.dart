@@ -10,6 +10,7 @@ import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 
 import '../Dialog/dialog.dart';
+import '../Dialog/reportDialog.dart';
 
 class Lostsee extends StatefulWidget{
   int LostIndex;
@@ -22,6 +23,7 @@ class Lostsee extends StatefulWidget{
 
 class MyLostsee extends State<Lostsee> {
   var formatter = DateFormat("yyyy-MM-dd");
+  String galleryname="";
    String student_id ="";
    String Title= "" ;
    String category = "전체";
@@ -32,13 +34,18 @@ class MyLostsee extends State<Lostsee> {
    // DateTime Time = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
   String Time="";
   final comment = TextEditingController();
-  String? Imagefile;
+  String Imagefile = "null";
   int commentsieze = 0;
-  final List<String> Comments = <String>[];
-  final List<String> Commentsname = <String>[];
-  final List<int> Commentsstudent_id = <int>[];
-  final List<String> CommentsTime = <String>[];
+  final List<String> Comments = <String>[""];
+  final List<String> Commentsname = <String>[""];
+  final List<int> Commentsstudent_id = <int>[0];
+  final List<String> CommentsTime = <String>[""];
   int commentcount = 0;
+
+
+
+
+
   @override
   initState()   {
     super.initState();
@@ -64,19 +71,19 @@ class MyLostsee extends State<Lostsee> {
       print("셋 스테이트");//돌아가는지 확인 하기위해 사용
 
       student_id= jsonEncode(response.data[0]['student_id']);//이걸써야 데이터 불러옰있음
-      print(student_id);
+
       Title= jsonEncode(response.data[0]['title']).replaceAll("\"", "");
-      print(Title);
+
       name= jsonEncode(response.data[0]['name']).replaceAll("\"", "");
-      print(name);
+
       LostDate=  jsonEncode(response.data[0]['lostdate']).replaceAll("\"", "");
-      print(LostDate);
+
       Time= jsonEncode(response.data[0]['time']).replaceAll("\"", "");
-      print(12);
+
 
       content = jsonEncode(response.data[0]['content']).replaceAll("\"", "");
 
-      print(content);
+
 
       LostLocation = jsonEncode(response.data[0]['location']).replaceAll("\"", "");
       category = jsonEncode(response.data[0]['category']).replaceAll("\"", "");
@@ -84,7 +91,7 @@ class MyLostsee extends State<Lostsee> {
         Imagefile = jsonEncode(response.data[0]['image']).replaceAll("\"", "");
       }
       print(Imagefile);
-
+     galleryname = (response.data[0]['losttype'] != 1)? "습득물":"분실물";
 
       if (response.statusCode==200) {
         print("불러오기 성공");
@@ -170,7 +177,7 @@ class MyLostsee extends State<Lostsee> {
       home:Scaffold(
         resizeToAvoidBottomInset: false ,
         appBar:AppBar(
-          title: const Text("분실물 게시판"),
+          title:  Text(galleryname+" 게시판"),
           leading:  IconButton(
             icon: const Icon(Icons.arrow_back_ios),color:Colors.white, onPressed: () {
             Navigator.pop(context);
@@ -192,7 +199,7 @@ class MyLostsee extends State<Lostsee> {
               children: [
                 Row(
                   children:  [
-                    Text("분실물 -> "+category,style: const TextStyle(color: Colors.lightBlue,fontSize: 8),)
+                    Text(galleryname+" > "+category,style: const TextStyle(color: Colors.lightBlue,fontSize: 8),)
                   ],
                 ),
                 Align(
@@ -211,7 +218,10 @@ class MyLostsee extends State<Lostsee> {
                         ),
                         PopupMenuItem(child: Text("신고하기")
                           ,value: 2,
-                          onTap: (){print("1:1대화");},
+                          onTap: (){
+                          print("레포트");
+                          ReportDialog(context,setState);
+                          },
                         ),
                       ],
 
@@ -228,10 +238,10 @@ class MyLostsee extends State<Lostsee> {
                 Container(
                   height: 10,
                 ),
-              if(Imagefile!=null && Imagefile!='null')...[
+              if( Imagefile!='null'  )...[
                 Container(
                     height: 270,
-                    child: Image.network(Imagefile!)
+                    child: Image.network(Imagefile)
                 ),
               ]
               else...[
@@ -368,7 +378,7 @@ class MyLostsee extends State<Lostsee> {
 
                                                         ),
                                                         Text(CommentsTime[index],style: TextStyle(fontSize: 10,color: Colors.grey),)
-                                                   , Text("\n"+Comments[index]+ index.toString()+"\n"
+                                                         , Text("\n"+Comments[index]+ index.toString()+"\n"
                                                             , style: const TextStyle(fontSize: 10,color: Colors.black),),//DB에 저장된 타이틀 값 받고
 
                                                       ],

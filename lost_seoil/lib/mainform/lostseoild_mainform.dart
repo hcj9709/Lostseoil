@@ -1,4 +1,5 @@
 
+import 'package:badges/badges.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../filter/filter.dart';
 import '../Dialog/dialog.dart';
+import '../filter/getfilter.dart';
 import '../menu/menu_drawer.dart';
 import '../postsee/lostsee.dart';
 class MyApp extends StatefulWidget{
@@ -39,7 +41,7 @@ class  MyAppscreen extends State<MyApp> {
   final RefreshController _refreshController =
   RefreshController(initialRefresh: false);
   List<int> LostIndex = <int>[];
-
+  int bell=0;
   Future <void> LostPosting()async {
     try {
       Dio dio = Dio();
@@ -52,6 +54,9 @@ class  MyAppscreen extends State<MyApp> {
             'endDate':'',
             'category':''
           }
+
+
+
       );
 
       setState((){
@@ -73,7 +78,7 @@ class  MyAppscreen extends State<MyApp> {
           }
 
         }
-
+        ListSize=5;
       });
 
     } catch (e) {
@@ -88,7 +93,6 @@ class  MyAppscreen extends State<MyApp> {
   void initState(){
     super.initState();
     LostPosting();
-    ListSize=5;
   }
   void _onRefresh() async{
     print('onRefresh');
@@ -146,7 +150,7 @@ class  MyAppscreen extends State<MyApp> {
 
               title: RichText(
                   text:  const TextSpan(
-                      style:TextStyle(fontSize: 27, color: Colors.lightBlue) ,
+                      style:TextStyle(fontSize: 24, color: Colors.lightBlue) ,
                       children:<TextSpan>[
                         TextSpan(text: "LOST", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
                         TextSpan(text: " IN", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
@@ -158,6 +162,18 @@ class  MyAppscreen extends State<MyApp> {
 
               actions: <Widget>[
                 const MyPopUp()  , // 다이얼로그 팝업 열리는 함수임
+                Badge(
+                  position: BadgePosition.topEnd(top: 7, end: 7),
+                  animationType: BadgeAnimationType.slide,
+                  animationDuration: Duration(milliseconds: 300),
+                  badgeContent: Text(bell.toString(), style: TextStyle(color: Colors.white, fontSize: 10),),
+                  child: IconButton(icon:Icon(Icons.notifications_none,size: 30),onPressed: () {
+                  setState(() {
+                    bell++;
+                  });
+
+                }),
+                ),
                 IconButton(
                   visualDensity: const VisualDensity(horizontal: -4.0, vertical: -2.0), //이부분이 줄여주는 부분이다.
                   padding: EdgeInsets.zero,

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:lost_seoil/Dialog/logoutDialog.dart';
 
+import '../Chat/Appchat.dart';
 import '../Dialog/dialog.dart';
 
 
@@ -63,7 +64,9 @@ class _MyMenuDrawer extends State<MenuDrawer> {
                   color: Colors.lightBlue,
                 ),
                 title: const Text("1:1대화", style: TextStyle(fontSize: 18,color: Colors.lightBlue),),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,MaterialPageRoute(builder:(context)=>  mychat(name:widget.name ,student_id:widget.student_id)));
+                  }
               ),
               ListTile(
                 leading: const Icon(

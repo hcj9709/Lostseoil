@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import '../Dialog/loginfail.dart';
+import '../mainform/lostgetpage.dart';
 import '../mainform/lostseoild_mainform.dart';
 
 class Getwrite extends StatefulWidget {
@@ -187,8 +188,7 @@ class MyGetwrite extends State<Getwrite> {
       setState((){
         print("포스트");//돌아가는지 확인 하기위해 사용
         if (response.statusCode==200) {
-
-          Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyApp(name: widget.name, student_id: widget.student_id, )));
+          Navigator.push(context,MaterialPageRoute(builder:(context)=>   GetPage(name: widget.name, student_id: widget.student_id, )));
           print("글올리기 성공");
         }
         else{

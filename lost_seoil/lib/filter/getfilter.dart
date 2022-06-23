@@ -118,7 +118,7 @@ class Mygetfilter extends State<Getfilter> {
         Scaffold(
           resizeToAvoidBottomInset: true , //이걸넣어 키보드가 올라왔을떄 화면이 밀리도록 설정
           appBar:AppBar(
-            title: const Text("상세검색(분실물)"),
+            title: const Text("상세검색(습득물)"),
             leading:  IconButton(
               icon: const Icon(Icons.arrow_back_ios),color:Colors.white, onPressed: () {
               Navigator.pop(context);
@@ -256,12 +256,12 @@ class Mygetfilter extends State<Getfilter> {
 
                               child: TextButton(
                                 onPressed : () async {startDate = await  _selectDate(context,
-                                    startDate!= null? startDate! : DateTime.now()
+                                    startDate!= null? startDate : DateTime.now()
                                 ); },
                                 child:Row(
                                     children: <Widget>[
                                       startDate != null?
-                                      Text(formatter.format(startDate!)): const Text("시작 날짜 선택",style: TextStyle(fontSize: 13),) ,
+                                      Text(formatter.format(startDate)): const Text("시작 날짜 선택",style: TextStyle(fontSize: 13),) ,
                                       const Icon(Icons.calendar_month),
                                     ]
                                 ),
@@ -281,12 +281,12 @@ class Mygetfilter extends State<Getfilter> {
                               fit:FlexFit.tight,
                               child: TextButton(
                                 onPressed : () async {endDate = await  _selectDate(context,
-                                    endDate!= null? endDate! : DateTime.now()
+                                    endDate!= null? endDate : DateTime.now()
                                 ); },
                                 child:Row(
                                     children: <Widget>[
                                       endDate != null?
-                                      Text(formatter.format(endDate!)): const Text("끝 날짜 선택",style: TextStyle(fontSize: 13),) ,
+                                      Text(formatter.format(endDate)): const Text("끝 날짜 선택",style: TextStyle(fontSize: 13),) ,
                                       const Icon(Icons.calendar_month) ,
                                     ]
                                 ),
@@ -302,9 +302,6 @@ class Mygetfilter extends State<Getfilter> {
                             onPressed: (){
                               print(searchText.text);
                               print(_selectedValue);
-
-
-
                               print(startDate);
                               print(endDate);
                               GetFilter();

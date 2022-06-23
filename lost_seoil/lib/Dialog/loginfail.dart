@@ -4,7 +4,7 @@ Future<void>  LoginfailDialog(BuildContext context) async {
   await showDialog(
       context: context ,
       //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
-      barrierDismissible: false,
+      barrierDismissible: true,
 
       builder: (BuildContext context) {
         return AlertDialog(

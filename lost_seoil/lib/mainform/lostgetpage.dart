@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../Dialog/dialog.dart';
 import '../Write/Getwrite.dart';
 
 import '../Write/Lostwrite.dart';
@@ -73,7 +72,7 @@ class  GetPagescreen extends State<GetPage> {
           }
 
         }
-
+        ListSize=5;
       });
 
     } catch (e) {
@@ -88,7 +87,7 @@ class  GetPagescreen extends State<GetPage> {
   void initState(){
     super.initState();
     LostPosting();
-    ListSize=5;
+
   }
   void _onRefresh() async{
     print('onRefresh');
@@ -157,7 +156,6 @@ class  GetPagescreen extends State<GetPage> {
               //타이틀
 
               actions: <Widget>[
-                const MyPopUp()  , // 다이얼로그 팝업 열리는 함수임
                 IconButton(
                   visualDensity: const VisualDensity(horizontal: -4.0, vertical: -2.0), //이부분이 줄여주는 부분이다.
                   padding: EdgeInsets.zero,
@@ -240,7 +238,7 @@ class  GetPagescreen extends State<GetPage> {
                         const Flexible(
                           fit:FlexFit.tight,
                           flex:3,
-                          child: Text("   분실물 게시판    ",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color:Colors.black),)
+                          child: Text("   습득물 게시판    ",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color:Colors.black),)
                           ,
                         )
 

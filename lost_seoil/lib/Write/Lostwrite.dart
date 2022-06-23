@@ -184,13 +184,15 @@ class MyLostwrite extends State<Lostwrite> {
         Response response = await dio.post('http://wnsgnl97.myqnapcloud.com:3001/api/posting/makePosting',
             data:body);
         print(response.data['url']);
-        PostImage.call(response.data['url'],imageFile!);
+        if(imageFile!=null) {
+          PostImage.call(response.data['url'], imageFile!);
+        }
+        print("이쯤에러?");
         //텍스트필드에 2개의 값을 json을 이용하여 인코드한다음 클라이언트가 data를 보내면 서버가 data를 받고 Db에 저장된값을 보내줌
               setState((){
           print("포스트");//돌아가는지 확인 하기위해 사용
           if (response.statusCode==200) {
-
-            Navigator.push(context,MaterialPageRoute(builder:(context)=>   GetPage(name: widget.name, student_id: widget.student_id, )));
+            Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyApp(name: widget.name, student_id: widget.student_id, )));
             print("글올리기 성공");
           }
           else{
@@ -201,7 +203,7 @@ class MyLostwrite extends State<Lostwrite> {
         });
 
       } catch (e) {
-        print("서버에러");
+        print("글올리기 서버에러");
       }
       finally{
 
@@ -503,7 +505,7 @@ class MyLostwrite extends State<Lostwrite> {
                                              controller: Content,
                                              minLines: 4,
                                              keyboardType: TextInputType.multiline,
-                                             maxLines: null,
+                                             maxLines: 5,
                                            decoration: InputDecoration(
                                              border : OutlineInputBorder(
                                                borderSide: const BorderSide(width: 1, color: Colors.grey),
