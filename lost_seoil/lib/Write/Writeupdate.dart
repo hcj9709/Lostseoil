@@ -9,19 +9,22 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:lost_seoil/postsee/lostsee.dart';
 import '../Dialog/loginfail.dart';
 import '../mainform/lostgetpage.dart';
 import '../mainform/lostseoild_mainform.dart';
 
-class Getwrite extends StatefulWidget {
+class Writeupdate extends StatefulWidget {
   String name;
   int student_id;
-  Getwrite({Key? key,required this.name,required this.student_id }) : super(key: key);
+  int LostIndex;
+  Writeupdate({Key? key,required this.name,required this.student_id , required this.LostIndex}) : super(key: key);
   @override
-  MyGetwrite createState() => MyGetwrite();
+  MyWriteupdate createState() => MyWriteupdate();
+
 }
 
-class MyGetwrite extends State<Getwrite> {
+class MyWriteupdate extends State<Writeupdate> {
   File? imageFile; // 카메라/갤러리에서 사진 가져올 때 사용함 (image_picker)
   final ImagePicker _picker = ImagePicker(); // 카메라/갤러리에서 사진 가져올 때 사용함 (image_picker)
   late String filtertext;
@@ -30,7 +33,7 @@ class MyGetwrite extends State<Getwrite> {
   final TitleController = TextEditingController();
   final LostwhereController = TextEditingController();
   final Content = TextEditingController();
-  int losttype=0;
+  int losttype=1;
   @override
   void dispose() {
     // TODO: implement dispose
@@ -109,6 +112,7 @@ class MyGetwrite extends State<Getwrite> {
   void initState() {
     dateinput.text = ""; //set the initial value of text field
     imageFile=null ; // 파일 초기값을 null로 설정
+    LodingData();
     super.initState();
   }
 
@@ -171,27 +175,56 @@ class MyGetwrite extends State<Getwrite> {
   }
 
 
+  Future<bool>LodingData() async{
+    try{
+      Dio dio = Dio();
+      var data = {'id':widget.LostIndex};
+      var body = json.encode(data);
+      Response response = await dio.post('http://wnsgnl97.myqnapcloud.com:3001/api/posting/getPosting'
+          ,data:body
+      );
+      int Index=widget.LostIndex;
 
+      setState(() {
+        String Title= jsonEncode(response.data[0]['title']).replaceAll("\"", "");
+        TitleController.text=Title;
+        String Location= jsonEncode(response.data[0]['location']).replaceAll("\"", "");
+        LostwhereController.text=Location;
+        String content = jsonEncode(response.data[0]['content']).replaceAll("\"", "");
+        Content.text=content;
+        _selectedValue=jsonEncode(response.data[0]['category']).replaceAll("\"", "");
+        //TitleController.text="text";
+        LostDate=  DateTime.parse(jsonEncode(response.data[0]['lostdate']).replaceAll("\"", ""));
+      });
 
-  Future<bool> PostData()  async { //함수내용은 Dio 이나 이름을 바꾸지 않았음
+    }
+    catch (e) {
+      print("불러오기 오류");
+    }
+    return false;
+  }
+
+  Future<bool> UpdateData()  async { //함수내용은 Dio 이나 이름을 바꾸지 않았음
     try {
       Dio dio = Dio();
 
-      var data = {'student_id': widget.student_id, 'title': TitleController.text,'content':Content.text ,'image': imageFile.toString(),'category' : _selectedValue, 'losttype': losttype,'lostdate':LostDate.toString() ,'location':LostwhereController.text};
+      var data = {'id': widget.LostIndex, 'title': TitleController.text,'content':Content.text ,'image': imageFile.toString(),'category' : _selectedValue,'lostdate':LostDate.toString() ,'location':LostwhereController.text};
 
       var body = json.encode(data); //데이타 피라미터를 json 인코드함
-      Response response = await dio.post('http://wnsgnl97.myqnapcloud.com:3001/api/posting/makePosting',
+      Response response = await dio.post('http://wnsgnl97.myqnapcloud.com:3001/api/posting/updatePosting',
           data:body);
+
       print(response.data['url']);
       if(imageFile!=null) {
         PostImage.call(response.data['url'], imageFile!);
       }
 
+      print("이쯤에러?");
       //텍스트필드에 2개의 값을 json을 이용하여 인코드한다음 클라이언트가 data를 보내면 서버가 data를 받고 Db에 저장된값을 보내줌
       setState((){
         print("포스트");//돌아가는지 확인 하기위해 사용
         if (response.statusCode==200) {
-          Navigator.push(context,MaterialPageRoute(builder:(context)=>   GetPage(name: widget.name, student_id: widget.student_id, )));
+          Navigator.push(context,MaterialPageRoute(builder:(context)=>   Lostsee(name: widget.name, student_id: widget.student_id, LostIndex: widget.LostIndex, )));
           print("글올리기 성공");
         }
         else{
@@ -202,7 +235,7 @@ class MyGetwrite extends State<Getwrite> {
       });
 
     } catch (e) {
-      print("서버에러");
+      print("글올리기 서버에러");
     }
     finally{
 
@@ -216,7 +249,7 @@ class MyGetwrite extends State<Getwrite> {
         home:  Scaffold(
             resizeToAvoidBottomInset: true , //이걸넣어 키보드가 올라왔을떄 화면이 밀리도록 설정
             appBar:AppBar(
-              title: const Text("습득물 게시판 글쓰기"),
+              title: const Text("글 수정"),
               leading:  IconButton(
                 icon: const Icon(Icons.arrow_back_ios),color:Colors.white, onPressed: () {
                 Navigator.pop(context);
@@ -311,16 +344,13 @@ class MyGetwrite extends State<Getwrite> {
                                               child: DropdownButton<String>(
                                                 isExpanded: true,
                                                 value: _selectedValue,
-
                                                 items: _valueList.map(
-
                                                       (String value) {
                                                     return DropdownMenuItem <String>(
                                                       value: value,
                                                       child: Text( value,style: const TextStyle(fontSize: 15),
                                                         textAlign: TextAlign.center,
                                                       ),
-
                                                     );
                                                   },
                                                 ).toList(),
@@ -353,7 +383,7 @@ class MyGetwrite extends State<Getwrite> {
                                           text:  const TextSpan(
                                               style:TextStyle(fontSize: 16, color: Colors.black) ,
                                               children:<TextSpan>[
-                                                TextSpan(text: '습득  ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                TextSpan(text: '분실날짜  ', style: TextStyle(fontWeight: FontWeight.bold)),
                                               ]
                                           )
                                       ),
@@ -402,7 +432,7 @@ class MyGetwrite extends State<Getwrite> {
                                       text:  const TextSpan(
                                           style:TextStyle(fontSize: 16, color: Colors.black) ,
                                           children:<TextSpan>[
-                                            TextSpan(text: '습득장소  ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                            TextSpan(text: '분실장소  ', style: TextStyle(fontWeight: FontWeight.bold)),
                                           ]
                                       )
                                   ),
@@ -504,7 +534,7 @@ class MyGetwrite extends State<Getwrite> {
                                           controller: Content,
                                           minLines: 4,
                                           keyboardType: TextInputType.multiline,
-                                          maxLines: null,
+                                          maxLines: 5,
                                           decoration: InputDecoration(
                                             border : OutlineInputBorder(
                                               borderSide: const BorderSide(width: 1, color: Colors.grey),
@@ -544,13 +574,13 @@ class MyGetwrite extends State<Getwrite> {
                                 print(Content.text);
                                 print(imageFile);
                                 if(TitleController.text!=''&&LostwhereController.text!=''&&Content.text!=''){
-                                  PostData();
+                                  UpdateData();
                                 }
                                 else{
                                   print("다입력해");
                                 }
                               },
-                              child:const Text("등록",style:  TextStyle(fontSize:20,color: Colors.white),),
+                              child:const Text("수정하기",style:  TextStyle(fontSize:20,color: Colors.white),),
                               style: ButtonStyle(
                                 backgroundColor:   MaterialStateProperty.all(Colors.lightBlue),
                                 // shape : 버튼의 모양을 디자인 하는 기능

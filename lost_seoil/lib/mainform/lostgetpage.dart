@@ -1,4 +1,5 @@
 
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class  GetPagescreen extends State<GetPage> {
   var _selectedValue = '제목';
   late int listindex;
   int ListSize=0;
-  String? imagefile ;
+  final List<String> imagefile =<String>[];
 
   final List<String> writeDate=<String>[];
   final List<String> Title=<String>[];
@@ -38,7 +39,8 @@ class  GetPagescreen extends State<GetPage> {
   final RefreshController _refreshController =
   RefreshController(initialRefresh: false);
   List<int> LostIndex = <int>[];
-
+  final List<int> is_complete = <int>[];
+  var Textcolor= Colors.black;
   Future <void> LostPosting()async {
     try {
       Dio dio = Dio();
@@ -55,24 +57,31 @@ class  GetPagescreen extends State<GetPage> {
 
       setState((){
         print("셋 스테이트");//돌아가는지 확인 하기위해 사용
+        print(response.data.length);
+
 
         if (response.statusCode==200) {
           for(int i = response.data.length-1; i>=0;i--){
             if(response.data[i]['losttype']==0){ //losttype 1로잡아서 분실물만 보여주도록함
               entries.add(response.data[i]['name']);
-              print(entries);
               Title.add( response.data[i]['title']);
-              print(Title);
+
               writeDate.add(response.data[i]['time']);
               LostIndex.add(response.data[i]['id']);
-              print(LostIndex);
-              imagefile = response.data[i]['image'];
+
+              if(response.data[i]['image']!=null){
+                imagefile.add(response.data[i]['image'].replaceAll("\"", ""));
+              }else{imagefile[i]="";}
               listindex++;
             }
           }
 
+          if(listindex>5){
+            ListSize=5;}
+          else{
+            ListSize=listindex;
+          }
         }
-        ListSize=5;
       });
 
     } catch (e) {
@@ -119,7 +128,7 @@ class  GetPagescreen extends State<GetPage> {
     // entries.add((entries.length+1).toString());
     if(mounted) {
       setState(() {
-
+        print(ListSize);
       });
     }
     _refreshController.loadComplete();
@@ -322,12 +331,34 @@ class  GetPagescreen extends State<GetPage> {
                                         width: MediaQuery.of(context).size.width,
                                         child:Column(
                                             children:[
-                                              ListTile(   leading:   Image.asset('assets/images/banana.png',),//DB에 저장된 이미지 받고
+                                              ListTile(    leading:  Column(
+                                        children: [
+                                        if( imagefile[index]!="null"  )...[
+                                      Container(
+                                      margin: EdgeInsets.all(0),
+                                      width:55,
+                                      height:56,
+                                      child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(3.0),
+                                          child: Image.network(imagefile[index],fit: BoxFit.cover,) // Text(key['title']),
+                                      ),
+
+                                      ),
+                                        ]
+                                        else...[
+                                          Container(
+                                              margin: EdgeInsets.fromLTRB(0, 20, 0, 15),
+                                              child:Text("사진없당")
+                                          ),
+                                        ],
+                                        ],
+                                              )
+                                  ,//DB에 저장된 이미지 받고
                                                 title:  Text(Title[index]+ index.toString(), style: const TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
                                                 subtitle:  Text(writeDate[index],style: const TextStyle(color:Colors.lightBlue),),//등록일자 받고
                                                 onTap: () {
 
-                                                  Navigator.push(context,MaterialPageRoute(builder:(context)=>   Lostsee(LostIndex:LostIndex[index],student_id: widget.student_id)));
+                                                  Navigator.push(context,MaterialPageRoute(builder:(context)=>   Lostsee(LostIndex:LostIndex[index],student_id: widget.student_id, name: widget.name,)));
                                                 },
                                               ),
                                               const Divider(color: Colors.grey,

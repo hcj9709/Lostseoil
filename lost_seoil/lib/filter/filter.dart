@@ -12,6 +12,7 @@ import '../Dialog/dialog.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../Search/Search.dart';
 import '../mainform/lostseoild_mainform.dart';
 
 class Myfilter extends StatefulWidget {
@@ -41,30 +42,20 @@ class Mylostfilter extends State<Myfilter> {
  // DateTime endDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
   Future<bool> GetFilter()  async { //함수내용은 Dio 이나 이름을 바꾸지 않았음
     try {
-      Dio dio = Dio();
 
 
-      Response response = await dio.get('http://wnsgnl97.myqnapcloud.com:3001/api/posting/',
-          queryParameters: {
-            'title_content':searchText.text,
-            'startDate':startDate.toString(),
-            'endDate':endDate.toString(),
-            'category':_selectedValue
-      }
-      );
-      print("12");
       //텍스트필드에 2개의 값을 json을 이용하여 인코드한다음 클라이언트가 data를 보내면 서버가 data를 받고 Db에 저장된값을 보내줌
       setState((){
-        print("포스트");//돌아가는지 확인 하기위해 사용
-        if (response.statusCode==200) {
-          Navigator.push(context,MaterialPageRoute(builder:(context)=>   MyApp(name: widget.name, student_id: widget.student_id, )));
+          Navigator.push(context,MaterialPageRoute(builder:(context)=>
+              Search(name: widget.name, student_id: widget.student_id ,
+                searchText: searchText.text, startDate: startDate.toString(), endDate: endDate.toString(),
+                selectedValue: _selectedValue )));
           print("보내기 성공");
         }
-        else{
-          //Future.delayed(Duration.zero, () => LoginfailDialog(context));
-          print("보내기 실패");
-        }
-      });
+
+
+
+      );
 
     } catch (e) {
       print("보내기 실패");

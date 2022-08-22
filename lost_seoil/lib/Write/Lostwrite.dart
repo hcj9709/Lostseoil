@@ -187,7 +187,7 @@ class MyLostwrite extends State<Lostwrite> {
         if(imageFile!=null) {
           PostImage.call(response.data['url'], imageFile!);
         }
-        print("이쯤에러?");
+
         //텍스트필드에 2개의 값을 json을 이용하여 인코드한다음 클라이언트가 data를 보내면 서버가 data를 받고 Db에 저장된값을 보내줌
               setState((){
           print("포스트");//돌아가는지 확인 하기위해 사용

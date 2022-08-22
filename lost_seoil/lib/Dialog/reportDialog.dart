@@ -6,7 +6,6 @@ enum Report { lie,sexual ,other,etc }
 Report? _report = Report.lie;
 // ignore: non_constant_identifier_names
 
-
 Future<void>  ReportDialog(BuildContext context ,StateSetter setState) async {
   await showDialog<void>(
       context: context ,

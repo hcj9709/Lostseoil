@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -7,18 +8,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:lost_seoil/Write/Writeupdate.dart';
 
+import '../Chat/ChatRoom.dart';
+import '../Dialog/DeleteDialog.dart';
 import '../Dialog/dialog.dart';
 import '../Dialog/reportDialog.dart';
+import '../mainform/lostgetpage.dart';
+import '../mainform/lostseoild_mainform.dart';
 
 class Lostsee extends StatefulWidget{
   int LostIndex;
   int student_id;
-  Lostsee({Key? key,required this.LostIndex,required this.student_id }) : super(key: key);
+  String name;
+  Lostsee({Key? key,required this.LostIndex,required this.student_id , required this.name}) : super(key: key);
   @override
   MyLostsee createState() => MyLostsee();
-
 }
 
 class MyLostsee extends State<Lostsee> {
@@ -36,22 +43,24 @@ class MyLostsee extends State<Lostsee> {
   final comment = TextEditingController();
   String Imagefile = "null";
   int commentsieze = 0;
-  final List<String> Comments = <String>[""];
-  final List<String> Commentsname = <String>[""];
-  final List<int> Commentsstudent_id = <int>[0];
-  final List<String> CommentsTime = <String>[""];
+  final List<String> Comments = <String>[];
+  final List<String> Commentsname = <String>[];
+  final List<int> Commentsstudent_id = <int>[];
+  final List<String> CommentsTime = <String>[];
+  final List<int> Commentid = <int>[];
   int commentcount = 0;
-
-
-
-
+  int is_complete = 0;
+  var appbarTextcolor= Colors.white;
+  var Textcolor= Colors.black;
+  int losttype=0;
 
   @override
   initState()   {
-    super.initState();
-    //postHttp();
     PostIndex();
     commentget();
+    super.initState();
+    //postHttp();
+
   }
   @override
   void dispose() {
@@ -71,7 +80,7 @@ class MyLostsee extends State<Lostsee> {
       print("셋 스테이트");//돌아가는지 확인 하기위해 사용
 
       student_id= jsonEncode(response.data[0]['student_id']);//이걸써야 데이터 불러옰있음
-
+        print(student_id);
       Title= jsonEncode(response.data[0]['title']).replaceAll("\"", "");
 
       name= jsonEncode(response.data[0]['name']).replaceAll("\"", "");
@@ -87,12 +96,17 @@ class MyLostsee extends State<Lostsee> {
 
       LostLocation = jsonEncode(response.data[0]['location']).replaceAll("\"", "");
       category = jsonEncode(response.data[0]['category']).replaceAll("\"", "");
-      if(response.data[0]['image']!=null){
+      is_complete = response.data[0]['is_complete'];
+      if(is_complete==1){
+        appbarTextcolor=Colors.grey;
+        Textcolor= Colors.grey;
+      }
+      if(response.data[0]['image']!= 'null'){
+        print(response.data[0]['image']);
         Imagefile = jsonEncode(response.data[0]['image']).replaceAll("\"", "");
       }
-      print(Imagefile);
      galleryname = (response.data[0]['losttype'] != 1)? "습득물":"분실물";
-
+      losttype = response.data[0]['losttype'];
       if (response.statusCode==200) {
         print("불러오기 성공");
       }
@@ -124,8 +138,9 @@ class MyLostsee extends State<Lostsee> {
             print(commentsieze);
             CommentsTime.add(response.data[i]['time']);
             commentcount++;
+            Commentid.add(response.data[i]['id']);
           }
-          print("불러오기 성공");
+          print("댓글 불러오기 성공");
         }
         else{
           print("불러오기 실패");
@@ -145,7 +160,6 @@ class MyLostsee extends State<Lostsee> {
 //학번 댓글 내용 게시글번호
       var data = {'student_id':widget.student_id,'content':comment.text,'posting_id':widget.LostIndex};
       var body = json.encode(data); //데이타 피라미터를 json 인코드함
-
       Response response = await dio.post('http://wnsgnl97.myqnapcloud.com:3001/api/posting/makeComment',
           data:body);
 
@@ -170,6 +184,255 @@ class MyLostsee extends State<Lostsee> {
     }
     return false;
   }
+
+ //삭제 다이얼로그
+  Future<void>  DeleteDialog(BuildContext context ,StateSetter setState) async {
+    await showDialog<void>(
+        context: context ,
+        //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+        barrierDismissible: true,
+
+        builder:(BuildContext context) {
+          return AlertDialog(
+            insetPadding: const EdgeInsets.all(15), //다이얼로그 박스에 대한 패딩
+            titlePadding: const EdgeInsets.all(0), //타이틀에대한 패딩
+            //contentPadding: const EdgeInsets.all(8), //글 내용에 대한 패딩
+            contentPadding: const EdgeInsets.only(top: 0, left: 8,right: 8, bottom: 0),
+            actionsPadding:const EdgeInsets.all(0) ,//action거기에 대한 패딩
+
+            // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(1.0)),
+            //Dialog Main Title
+
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children:   <Widget>[
+                Container(
+                    margin: EdgeInsets.all(20),
+                    child: Align(
+                        alignment: Alignment.topLeft,
+                        child:Text("삭제 확인"
+                        )
+                    )
+                ),
+              ],
+
+            ),
+
+            content:GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+
+                child:SingleChildScrollView(
+                  child:StatefulBuilder(
+                      builder: (context, setState) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("정말로 삭제 하시겠습니까?")
+                          ],
+                        );
+                      }
+                  ),
+                )
+            ),
+            actions: <Widget>[
+              // ignore: deprecated_member_use
+              TextButton(
+                child: const Text("확인"),
+                onPressed: () {
+                  DeletePost();
+                  Navigator.pop(context);
+                },
+              ),
+
+            ],
+          );
+        });
+  }
+
+  Future<bool> DeletePost() async{
+    Dio dio = Dio();
+    var data = {'id':widget.LostIndex};
+    var body = json.encode(data);
+
+    Response response = await dio.delete('http://wnsgnl97.myqnapcloud.com:3001/api/posting/deletePosting'
+        ,data:body
+    );
+
+    setState((){
+      print("셋 스테이트");//돌아가는지 확인 하기위해 사용
+
+      if (response.statusCode==200) {
+        print("삭제");
+        Navigator.push(context,MaterialPageRoute(builder:(context)=> MyApp(name: widget.name ,student_id: widget.student_id )));
+
+
+      }
+      else{
+        print("삭제실패");
+      }
+    });
+    return false;
+  }
+
+  Future<bool> DeleteComment(int Commentid) async{
+    Dio dio = Dio();
+    var data = {'id': Commentid};
+    var body = json.encode(data);
+    print(Commentid);
+
+    Response response = await dio.delete('http://wnsgnl97.myqnapcloud.com:3001/api/posting/deleteComment'
+        ,data:body
+    );
+
+    setState((){
+      print("셋 스테이트");//돌아가는지 확인 하기위해 사용
+
+      if (response.statusCode==200) {
+        print("삭제");
+        showToast('댓글삭제');
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => super.widget));
+      }
+      else{
+        print("삭제실패");
+      }
+    });
+    return false;
+  }
+
+
+
+  Future<void>  CompleteDialog(BuildContext context ,StateSetter setState) async {
+    await showDialog<void>(
+        context: context ,
+        //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+        barrierDismissible: true,
+
+        builder:(BuildContext context) {
+          return AlertDialog(
+            insetPadding: const EdgeInsets.all(15), //다이얼로그 박스에 대한 패딩
+            titlePadding: const EdgeInsets.all(0), //타이틀에대한 패딩
+            //contentPadding: const EdgeInsets.all(8), //글 내용에 대한 패딩
+            contentPadding: const EdgeInsets.only(top: 0, left: 8,right: 8, bottom: 0),
+            actionsPadding:const EdgeInsets.all(0) ,//action거기에 대한 패딩
+
+            // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(1.0)),
+            //Dialog Main Title
+
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children:   <Widget>[
+                Container(
+                    margin: EdgeInsets.all(20),
+                    child: Align(
+                        alignment: Alignment.topLeft,
+                        child:Text("완료처리"
+                        )
+                    )
+                ),
+              ],
+
+            ),
+
+            content:GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+
+                child:SingleChildScrollView(
+                  child:StatefulBuilder(
+                      builder: (context, setState) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("정말로 완료 처리 하시겠습니까?")
+                          ],
+                        );
+                      }
+                  ),
+                )
+            ),
+            actions: <Widget>[
+              // ignore: deprecated_member_use
+              TextButton(
+                child: const Text("완료"),
+                onPressed: () {
+                  CompletePost();
+                  Navigator.pop(context);
+                },
+              ),
+
+            ],
+          );
+        });
+  }
+
+  Future<bool> CompletePost() async{
+    Dio dio = Dio();
+    var data = {'id':widget.LostIndex};
+    var body = json.encode(data);
+
+    Response response = await dio.put('http://wnsgnl97.myqnapcloud.com:3001/api/posting/updatePosting'
+        ,data:body
+    );
+
+    setState((){
+      print("셋 스테이트");//돌아가는지 확인 하기위해 사용
+
+      if (response.statusCode==200) {
+        print("삭제");
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => super.widget));
+
+      }
+      else{
+        print("삭제실패");
+      }
+    });
+    return false;
+  }
+
+  Future<bool> chatStart() async{
+    Dio dio = Dio();
+    var data = {'user1':widget.student_id,'user2':student_id};
+    var body = json.encode(data);
+
+    Response response = await dio.post('http://wnsgnl97.myqnapcloud.com:3001/api/chat/chatRoom'
+        ,data:body
+    );
+    print("123");
+    setState((){
+      print("셋 스테이트");//돌아가는지 확인 하기위해 사용
+
+      if (response.statusCode==200) {
+        print("채팅방 생성");
+        Navigator.push(context,MaterialPageRoute(builder:(context)=>  MychatRoom(student_id: widget.student_id, name: widget.name,)));
+
+      }
+      else{
+        print("채팅방 존재");
+        Navigator.push(context,MaterialPageRoute(builder:(context)=>  MychatRoom(student_id: widget.student_id, name: widget.name,)));
+
+      }
+    });
+    return false;
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -180,7 +443,11 @@ class MyLostsee extends State<Lostsee> {
           title:  Text(galleryname+" 게시판"),
           leading:  IconButton(
             icon: const Icon(Icons.arrow_back_ios),color:Colors.white, onPressed: () {
-            Navigator.pop(context);
+              if(losttype==1) {
+                Navigator.push(context,MaterialPageRoute(builder:(context)=> MyApp(name: widget.name ,student_id: widget.student_id )));
+              }else{
+                Navigator.push(context,MaterialPageRoute(builder:(context)=> GetPage(name: widget.name ,student_id: widget.student_id )));
+              }
           },) //글쓰기에서 뒤로가기 버튼인데 이거 나중에 보완하는것이 좋을거같음
           ,
         )
@@ -199,22 +466,60 @@ class MyLostsee extends State<Lostsee> {
               children: [
                 Row(
                   children:  [
-                    Text(galleryname+" > "+category,style: const TextStyle(color: Colors.lightBlue,fontSize: 8),)
+                    Text(galleryname+" > "+category,style: const TextStyle(color: Colors.lightBlue,fontSize: 8),),
+
                   ],
                 ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child:Text(Title),
-                ),
+                Container(
+                  height: 22,
+                child:Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children:[
+                        Text(Title,style: TextStyle(color: Textcolor),),
+                   if((widget.student_id.toString())==(student_id.toString()))...[
+                     PopupMenuButton(
+                       padding: EdgeInsets.fromLTRB(5,0,3, 7),
+                         icon: Icon(Icons.more_vert_outlined,size: 20,color: Textcolor,),
+                       itemBuilder: (context)=>[
+                         PopupMenuItem(child: Text("게시글 수정")
+                           ,value: 1,
+                           onTap: () async{
+                              await Future.delayed(Duration.zero);
+                               Navigator.push(context, MaterialPageRoute(
+                                   builder: (context) =>
+                                       Writeupdate(name: widget.name,
+                                           student_id: widget.student_id, LostIndex: widget.LostIndex,)));
+                           }),
+                         PopupMenuItem(child: Text("게시글 삭제")
+                           ,value: 2,
+                           onTap: (){
+                             print("삭제");
+                             DeleteDialog(context,setState);
+                           },
+                         ),
+                         PopupMenuItem(child: Text("완료처리")
+                           ,value: 2,
+                           onTap: (){
+                             print("완료");
+                             CompleteDialog(context,setState);
+                           },
+                         ),
+                       ],
+                     )
+
+                  ],
+                ]
+                ),),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     PopupMenuButton(
-                      child: Text("작성자 : "+student_id+"_"+name, style:const TextStyle(fontSize: 12, color: Colors.black) ,),
+                      child: Text("작성자 : "+student_id+"_"+name, style: TextStyle(fontSize: 12, color: Textcolor) ,),
                       itemBuilder: (context)=>[
+                        if(widget.student_id != int.parse(student_id))...[
                         PopupMenuItem(child: Text("1:1대화")
                           ,value: 1,
-                          onTap: (){print("1:1대화");},
+                          onTap: (){print("대화"); chatStart();},
                         ),
                         PopupMenuItem(child: Text("신고하기")
                           ,value: 2,
@@ -223,11 +528,12 @@ class MyLostsee extends State<Lostsee> {
                           ReportDialog(context,setState);
                           },
                         ),
+                        ],
                       ],
 
 
                     ),
-                    Text(Time,style:const TextStyle(fontSize: 12, color: Colors.black))
+                    Text(Time,style: TextStyle(fontSize: 12, color: Textcolor))
                   ],
                 ),
                 const Divider(
@@ -238,7 +544,7 @@ class MyLostsee extends State<Lostsee> {
                 Container(
                   height: 10,
                 ),
-              if( Imagefile!='null'  )...[
+              if( Imagefile!='null')...[
                 Container(
                     height: 270,
                     child: Image.network(Imagefile)
@@ -246,16 +552,17 @@ class MyLostsee extends State<Lostsee> {
               ]
               else...[
                Container(
+                 height: 50,
                   ),
                     ],
                 Row(
                   children: [
                     RichText(
                         text:   TextSpan(
-                            style:const TextStyle(fontSize: 12, color: Colors.black) ,
+                            style: TextStyle(fontSize: 12, color: Textcolor) ,
                             children:<TextSpan>[
-                              const TextSpan(text: '분실일자 : ', style: TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(text: LostDate),
+                               TextSpan(text: '분실일자 : ', style: TextStyle(fontWeight: FontWeight.bold,color: Textcolor)),
+                              TextSpan(text: LostDate,style:TextStyle(color: Textcolor)),
                               //TextSpan(text:StringTime.toString()),
 
                             ]
@@ -272,8 +579,8 @@ class MyLostsee extends State<Lostsee> {
                         text:   TextSpan(
                             style:const TextStyle(fontSize: 12, color: Colors.black) ,
                             children:<TextSpan>[
-                              const TextSpan(text: '분실장소 : ', style: TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(text: LostLocation.replaceAll("\"", "")),
+                              TextSpan(text: '분실장소 : ', style: TextStyle(fontWeight: FontWeight.bold,color: Textcolor)),
+                              TextSpan(text: LostLocation.replaceAll("\"", ""),style: TextStyle(color: Textcolor)),
                               //TextSpan(text:StringTime.toString()),
 
                             ]
@@ -289,10 +596,10 @@ class MyLostsee extends State<Lostsee> {
                   children: [
                     RichText(
                         maxLines: 100,
-                        text:   const TextSpan(
-                            style:TextStyle(fontSize: 12, color: Colors.black) ,
+                        text:    TextSpan(
+                            style:TextStyle(fontSize: 12, color: Textcolor) ,
                             children:<TextSpan>[
-                              TextSpan(text: '특이사항 : ', style: TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(text: '특이사항 : ', style: TextStyle(fontWeight: FontWeight.bold,color: Textcolor)),
                               //TextSpan(text:StringTime.toString()),
 
                             ]
@@ -301,7 +608,7 @@ class MyLostsee extends State<Lostsee> {
                     Expanded(
                      child:Text(content,     maxLines: 3,
                          textAlign: TextAlign.left,
-                      softWrap: true,   overflow: TextOverflow.clip  )
+                      softWrap: true,   overflow: TextOverflow.clip  ,style: TextStyle(color: Textcolor),)
                     )
 
                   ],
@@ -362,23 +669,50 @@ class MyLostsee extends State<Lostsee> {
                                                         Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
-                                                        PopupMenuButton(
-                                                          child: Text(Commentsstudent_id[index].toString() + Commentsname[index],style:TextStyle(fontSize: 12,)),
-                                                          itemBuilder: (context)=>[
-                                                            PopupMenuItem(child: Text("1:1대화")
-                                                              ,value: 1,
-                                                              onTap: (){print("1:1대화");},
-                                                            ),
-                                                            PopupMenuItem(child: Text("신고하기")
-                                                              ,value: 2,
-                                                              onTap: (){print("1:1대화");},
-                                                            ),
-                                                          ],
 
+                                                        Container(
+                                                          height: 22,
+                                                            width: MediaQuery.of(context).size.width-60,
+                                                          child:Row(
+                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              children:[
+                                                                PopupMenuButton(
+                                                                  child: Text(Commentsstudent_id[index].toString() + Commentsname[index],style:TextStyle(fontSize: 12,)),
+                                                                  itemBuilder: (context)=>[
+                                                                    PopupMenuItem(child: Text("1:1대화")
+                                                                      ,value: 1,
+                                                                      onTap: (){print("1:1대화");
+                                                                      },
+                                                                    ),
+                                                                    PopupMenuItem(child: Text("신고하기")
+                                                                      ,value: 2,
+                                                                      onTap: (){print("1:1대화");},
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                if((widget.student_id.toString())==(student_id.toString()))...[
+                                                                  PopupMenuButton(
+                                                                    padding: EdgeInsets.fromLTRB(5,0,3, 7),
+                                                                    icon: Icon(Icons.more_vert_outlined,size: 20,),
+                                                                    itemBuilder: (context)=>[
+                                                                      PopupMenuItem(child: Text("댓글 삭제")
+                                                                        ,value: 2,
+                                                                        onTap: (){
+                                                                          print("댓글삭제");
+                                                                          DeleteComment(Commentid[index]);
 
-                                                        ),
+                                                                        },
+                                                                      ),
+
+                                                                    ],
+                                                                  )
+
+                                                                ],
+                                                              ]
+                                                          ),),
+
                                                         Text(CommentsTime[index],style: TextStyle(fontSize: 10,color: Colors.grey),)
-                                                         , Text("\n"+Comments[index]+ index.toString()+"\n"
+                                                         , Text("\n"+Comments[index]+"\n"
                                                             , style: const TextStyle(fontSize: 10,color: Colors.black),),//DB에 저장된 타이틀 값 받고
 
                                                       ],
@@ -446,6 +780,7 @@ class MyLostsee extends State<Lostsee> {
                            context,
                            MaterialPageRoute(
                                builder: (BuildContext context) => super.widget));
+
                      }
                      else{
                        print("빈칸x");
@@ -472,12 +807,19 @@ class MyLostsee extends State<Lostsee> {
         )
 
         ),
-      )
+      ),
+
     );
 
 
   }
-
-
-
+}
+void showToast(String message) {
+  Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.lightBlue,
+      textColor: Colors.white,
+      fontSize: 16.0);
 }

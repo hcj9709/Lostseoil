@@ -1,8 +1,14 @@
 
+
 import 'package:flutter/material.dart';
 import 'package:lost_seoil/Dialog/logoutDialog.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
+import '../Chat/Appchat.dart';
+import '../Chat/ChatRoom.dart';
 import '../Dialog/dialog.dart';
+import '../MyWrited/MyWrited.dart';
 
 
 class MenuDrawer extends StatefulWidget {
@@ -55,7 +61,9 @@ class _MyMenuDrawer extends State<MenuDrawer> {
                   color: Colors.lightBlue,
                 ),
                 title: const Text("내 글 조회", style: TextStyle(fontSize: 18,color: Colors.lightBlue),),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,MaterialPageRoute(builder:(context)=>  Writed(name:widget.name ,student_id:widget.student_id)));
+                },
               ),
               ListTile(
                 leading: const Icon(
@@ -63,7 +71,9 @@ class _MyMenuDrawer extends State<MenuDrawer> {
                   color: Colors.lightBlue,
                 ),
                 title: const Text("1:1대화", style: TextStyle(fontSize: 18,color: Colors.lightBlue),),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,MaterialPageRoute(builder:(context)=>  MychatRoom(name:widget.name ,student_id:widget.student_id)));
+                  }
               ),
               ListTile(
                 leading: const Icon(
@@ -89,8 +99,20 @@ class _MyMenuDrawer extends State<MenuDrawer> {
                 title: const Text("로그아웃", style: TextStyle(fontSize: 18,color: Colors.lightBlue),),
                 onTap: () async {  Future.delayed(Duration.zero, () => LogoutDialog(context));},
               ),
-              const ListTile(title: Text("학생 지원처 : 02-xxxx-xxxx",style: TextStyle(fontSize: 18),),)
-
+              ListTile(  leading: const Icon(
+                Icons.phone,
+                color: Colors.lightBlue,
+              ),
+                title: const Text("학생지원처 : 02-490-7378", style: TextStyle(fontSize: 18,color: Colors.lightBlue),),
+                onTap: () async {
+                  final url = Uri.parse('tel: 02-490-7378');
+                  if (await canLaunchUrl(url)) {
+                    launchUrl(url);
+                  } else {
+                    throw "Can't launch $url";
+                  }
+                },
+              )
 
 
 
