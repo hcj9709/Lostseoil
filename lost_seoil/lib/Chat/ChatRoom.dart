@@ -21,6 +21,7 @@ class MychatRooms extends State<MychatRoom> {
   int ListSize=0;
   final List<String> writeDate=<String>[];
   final List<String> Title=<String>[];
+  final List<String> Title2=<String>[];
   final List<String> content=<String>[];
   final List<String> LostIndex = <String>[];
   var nowdate = DateTime.now();
@@ -40,9 +41,9 @@ class MychatRooms extends State<MychatRoom> {
         print("셋 스테이트");//돌아가는지 확인 하기위해 사용
         if (response.statusCode==200) {
           for(int i =0 ; i<response.data.length;i++){
-
-            Title.add(response.data[i]['attend']);
-
+            print(response.data);
+            Title.add(response.data[i]['name']);
+            Title2.add(response.data[i]['attend']);
             content.add(response.data[i]['msg']);
 
             LostIndex.add(response.data[i]['room_id']);
@@ -149,7 +150,7 @@ class MychatRooms extends State<MychatRoom> {
                           ],
                         )
                           ,//DB에 저장된 이미지 받고
-                          title:  Text(Title[index]),//DB에 저장된 타이틀 값 받고
+                          title:  Text(Title2[index].toString()+" "+Title[index]),//DB에 저장된 타이틀 값 받고
                           trailing: Text(writeDate[index],style: TextStyle(color: Colors.grey),),
                           subtitle:  Text(content[index],style: TextStyle(color:Colors.lightBlue,overflow: TextOverflow.ellipsis,),),//등록일자 받고
                           onTap: () {

@@ -375,7 +375,7 @@ class  MyAppscreen extends State<MyApp> {
                                                 ],
                                               )
                                                 ,//DB에 저장된 이미지 받고
-                                                title:  Text(Title[index] + (is_complete[index]==1? " 완료" : "")  , style:  is_complete[index] == 1 ? TextStyle(fontSize: 15 ,color:Colors.grey) : TextStyle(fontSize: 15 ,color:Colors.black)),//DB에 저장된 타이틀 값 받고
+                                                title:  Text(Title[index] + (is_complete[index]==1? " 완료" : "")  , style:  is_complete[index] == 1 ? TextStyle(fontSize: 15 ,color:Colors.grey, overflow: TextOverflow.ellipsis) : TextStyle(fontSize: 15 ,color:Colors.black, overflow: TextOverflow.ellipsis)),//DB에 저장된 타이틀 값 받고
                                                 subtitle:  Text(writeDate[index],style: const TextStyle(color:Colors.lightBlue),),//등록일자 받고
                                                 onTap: () {
 

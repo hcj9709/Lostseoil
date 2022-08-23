@@ -213,14 +213,31 @@ class Chatstart extends State<mychat> {
                controller: scroll,
                scrollDirection: Axis.vertical,
                shrinkWrap: true,
-               reverse: true,
+               reverse: false,
                cacheExtent: 10000,
                itemCount: MessagesModel.messages.length,
                itemBuilder: (BuildContext context, int index) {
 
                  var message = MessagesModel.messages[MessagesModel.messages.length - index - 1];
                  return (message['userid'] == widget.student_id )
-                     ? ChatBubble(
+                     ? Column(
+                      children:[
+                         Row(
+                             mainAxisAlignment: MainAxisAlignment.end,
+                 children:[
+                           Container(
+                              constraints: BoxConstraints(maxWidth: size.width * 0.7),
+                              margin: EdgeInsets.fromLTRB(0, 10, 15, 0),
+                              child: Column(
+                                 crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                 Text('${message['chat_time'].split(" ")[1]}', style: TextStyle(color: Colors.black87, fontSize: 10)),
+                                                         ],
+                          ),
+                        ),
+                       ]
+                         ),
+                        ChatBubble(
                    clipper: ChatBubbleClipper1(type: BubbleType.sendBubble),
                    alignment: Alignment.topRight,
                    margin: EdgeInsets.only(top: 5, bottom: 5),
@@ -230,13 +247,33 @@ class Chatstart extends State<mychat> {
                      child: Column(
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
-                        // Text('@${message['time']}', style: TextStyle(color: Colors.grey, fontSize: 10)),
+                       // Text('${message['chat_time']}', style: TextStyle(color: Colors.grey, fontSize: 10)),
                          Text('${message['msg']}', style: TextStyle(color: Colors.black, fontSize: 16))
                        ],
                      ),
                    ),
+
+                       )
+                       ]
                  )
-                     : ChatBubble(
+                     :
+                 Column(
+                   children:[  Row(
+                       mainAxisAlignment: MainAxisAlignment.start,
+                       children:[
+                         Container(
+                           constraints: BoxConstraints(maxWidth: size.width * 0.7),
+                           margin: EdgeInsets.fromLTRB(15, 10, 0, 0),
+                           child: Row(
+                             children: [
+                               Text('${message['chat_time'].split(" ")[1]}', style: TextStyle(color: Colors.black87, fontSize: 10)),
+                               Text("  "+'${message['name']} ', style: TextStyle(color: Colors.black87, fontSize: 12)),
+                             ],
+                           ),
+                         ),
+                       ]
+                   ),
+                   ChatBubble(
                    clipper: ChatBubbleClipper1(type: BubbleType.receiverBubble),
                    alignment: Alignment.topLeft,
                    margin: EdgeInsets.only(top: 5, bottom: 5),
@@ -246,11 +283,14 @@ class Chatstart extends State<mychat> {
                      child: Column(
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
-                         Text('${message['name']} ', style: TextStyle(color: Colors.grey, fontSize: 10)),
+                        // Text('${message['chat_time']}', style: TextStyle(color: Colors.grey, fontSize: 10)),
+
                          Text('${message['msg']}', style: TextStyle(color: Colors.black, fontSize: 16))
                        ],
                      ),
                    ),
+                 )
+                 ]
                  );
                },
              ),

@@ -606,7 +606,7 @@ class MyLostsee extends State<Lostsee> {
                         )
                     ),
                     Expanded(
-                     child:Text(content,     maxLines: 3,
+                     child:Text(content.replaceAll("\\n", "\n"),     maxLines: 3,
                          textAlign: TextAlign.left,
                       softWrap: true,   overflow: TextOverflow.clip  ,style: TextStyle(color: Textcolor),)
                     )

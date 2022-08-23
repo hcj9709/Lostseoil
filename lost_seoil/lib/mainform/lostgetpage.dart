@@ -73,6 +73,7 @@ class  GetPagescreen extends State<GetPage> {
                 imagefile.add(response.data[i]['image'].replaceAll("\"", ""));
               }else{imagefile[i]="";}
               listindex++;
+              is_complete.add(response.data[i]['is_complete']);
             }
           }
 
@@ -354,7 +355,7 @@ class  GetPagescreen extends State<GetPage> {
                                         ],
                                               )
                                   ,//DB에 저장된 이미지 받고
-                                                title:  Text(Title[index]+ index.toString(), style: const TextStyle(fontSize: 15,color: Colors.black),),//DB에 저장된 타이틀 값 받고
+                                                title: Text(Title[index] + (is_complete[index]==1? " 완료" : "")  , style:  is_complete[index] == 1 ? TextStyle(fontSize: 15 ,color:Colors.grey, overflow: TextOverflow.ellipsis) : TextStyle(fontSize: 15 ,color:Colors.black, overflow: TextOverflow.ellipsis)),//DB에 저장된 타이틀 값 받고
                                                 subtitle:  Text(writeDate[index],style: const TextStyle(color:Colors.lightBlue),),//등록일자 받고
                                                 onTap: () {
 
